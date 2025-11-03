@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - TrainUp</title>
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/dashboard.css">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <i class="fas fa-graduation-cap"></i>
+                    TrainUp
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item active">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="internships.html" class="nav-item">
+                    <i class="fas fa-briefcase"></i>
+                    <span>Browse Internships</span>
+                </a>
+                <a href="my-applications.html" class="nav-item">
+                    <i class="fas fa-file-alt"></i>
+                    <span>My Applications</span>
+                </a>
+                <a href="profile.html" class="nav-item">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+                <a href="#" class="nav-item" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-avatar" id="userAvatar">S</div>
+                    <div class="user-info">
+                        <h4 id="userName">Student</h4>
+                        <p id="userEmail">student@example.com</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="page-header">
+                <h1>Welcome back, <span id="welcomeName">Student</span>! 👋</h1>
+                <p>Here's what's happening with your internship journey</p>
+            </div>
+
+            <!-- Alert Messages -->
+            <div id="alertMessage" class="alert" style="display: none;"></div>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <div>
+                            <div class="stat-value" id="totalApplications">0</div>
+                            <div class="stat-label">Total Applications</div>
+                        </div>
+                        <div class="stat-card-icon primary">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <div>
+                            <div class="stat-value" id="pendingApplications">0</div>
+                            <div class="stat-label">Under Review</div>
+                        </div>
+                        <div class="stat-card-icon warning">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <div>
+                            <div class="stat-value" id="acceptedApplications">0</div>
+                            <div class="stat-label">Accepted</div>
+                        </div>
+                        <div class="stat-card-icon success">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <div>
+                            <div class="stat-value" id="availableInternships">0</div>
+                            <div class="stat-label">Available Internships</div>
+                        </div>
+                        <div class="stat-card-icon info">
+                            <i class="fas fa-briefcase"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Applications -->
+            <div class="content-section">
+                <div class="section-header">
+                    <h2>Recent Applications</h2>
+                    <a href="my-applications.html" class="btn btn-outline btn-sm">View All</a>
+                </div>
+                
+                <div id="recentApplications">
+                    <!-- Loading state -->
+                    <div class="empty-state">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Loading applications...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Available Internships -->
+            <div class="content-section">
+                <div class="section-header">
+                    <h2>Latest Internships</h2>
+                    <a href="internships.html" class="btn btn-outline btn-sm">Browse All</a>
+                </div>
+                
+                <div id="latestInternships">
+                    <!-- Loading state -->
+                    <div class="empty-state">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Loading internships...</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- JavaScript Files -->
+    <script src="../../js/config.js"></script>
+    <script src="../../js/auth.js"></script>
+    <script src="../../js/api.js"></script>
+    <script src="../../js/student-dashboard.js"></script>
+</body>
+</html>

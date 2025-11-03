@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Internships - TrainUp</title>
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/dashboard.css">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <i class="fas fa-graduation-cap"></i>
+                    TrainUp
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="internships.html" class="nav-item active">
+                    <i class="fas fa-briefcase"></i>
+                    <span>Browse Internships</span>
+                </a>
+                <a href="my-applications.html" class="nav-item">
+                    <i class="fas fa-file-alt"></i>
+                    <span>My Applications</span>
+                </a>
+                <a href="profile.html" class="nav-item">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+                <a href="#" class="nav-item" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-avatar" id="userAvatar">S</div>
+                    <div class="user-info">
+                        <h4 id="userName">Student</h4>
+                        <p id="userEmail">student@example.com</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="page-header">
+                <h1>Browse Internships 💼</h1>
+                <p>Find and apply to internships that match your skills and interests</p>
+            </div>
+
+            <!-- Alert Messages -->
+            <div id="alertMessage" class="alert" style="display: none;"></div>
+
+            <!-- Search and Filters -->
+            <div class="content-section">
+                <div class="search-filters">
+                    <div class="form-group">
+                        <input 
+                            type="text" 
+                            id="searchInput" 
+                            placeholder="Search by title, company, or skills..."
+                            onkeyup="filterInternships()"
+                        >
+                    </div>
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                        <select id="categoryFilter" class="form-control" onchange="filterInternships()">
+                            <option value="">All Categories</option>
+                            <option value="Software Development">Software Development</option>
+                            <option value="Data Science">Data Science</option>
+                            <option value="Design">Design</option>
+                            <option value="Marketing">Marketing</option>
+                            <option value="Engineering">Engineering</option>
+                        </select>
+                        
+                        <select id="paidFilter" class="form-control" onchange="filterInternships()">
+                            <option value="">All Types</option>
+                            <option value="paid">Paid Only</option>
+                            <option value="unpaid">Unpaid Only</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Internships List -->
+            <div class="content-section">
+                <div class="section-header">
+                    <h2>Available Internships (<span id="internshipCount">0</span>)</h2>
+                </div>
+                
+                <div id="internshipsList">
+                    <!-- Loading state -->
+                    <div class="empty-state">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Loading internships...</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- JavaScript Files -->
+    <script src="../../js/config.js"></script>
+    <script src="../../js/auth.js"></script>
+    <script src="../../js/api.js"></script>
+    <script src="../../js/internships.js"></script>
+</body>
+</html>

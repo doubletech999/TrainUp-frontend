@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Applications - TrainUp</title>
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/dashboard.css">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <i class="fas fa-graduation-cap"></i>
+                    TrainUp
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="internships.html" class="nav-item">
+                    <i class="fas fa-briefcase"></i>
+                    <span>Browse Internships</span>
+                </a>
+                <a href="my-applications.html" class="nav-item active">
+                    <i class="fas fa-file-alt"></i>
+                    <span>My Applications</span>
+                </a>
+                <a href="profile.html" class="nav-item">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+                <a href="#" class="nav-item" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-avatar" id="userAvatar">S</div>
+                    <div class="user-info">
+                        <h4 id="userName">Student</h4>
+                        <p id="userEmail">student@example.com</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="page-header">
+                <h1>My Applications 📝</h1>
+                <p>Track and manage your internship applications</p>
+            </div>
+
+            <!-- Alert Messages -->
+            <div id="alertMessage" class="alert" style="display: none;"></div>
+
+            <!-- Filter Tabs -->
+            <div class="content-section">
+                <div style="display: flex; gap: 1rem; border-bottom: 2px solid var(--border-color); margin-bottom: 1.5rem;">
+                    <button class="filter-tab active" data-filter="all" onclick="filterApplications('all')">
+                        All Applications
+                    </button>
+                    <button class="filter-tab" data-filter="SUBMITTED" onclick="filterApplications('SUBMITTED')">
+                        Submitted
+                    </button>
+                    <button class="filter-tab" data-filter="UNDER_REVIEW" onclick="filterApplications('UNDER_REVIEW')">
+                        Under Review
+                    </button>
+                    <button class="filter-tab" data-filter="ACCEPTED" onclick="filterApplications('ACCEPTED')">
+                        Accepted
+                    </button>
+                    <button class="filter-tab" data-filter="REJECTED" onclick="filterApplications('REJECTED')">
+                        Rejected
+                    </button>
+                </div>
+            </div>
+
+            <style>
+                .filter-tab {
+                    background: none;
+                    border: none;
+                    padding: 0.75rem 1.5rem;
+                    font-size: 1rem;
+                    font-weight: 500;
+                    color: var(--text-secondary);
+                    cursor: pointer;
+                    border-bottom: 3px solid transparent;
+                    transition: var(--transition);
+                }
+                
+                .filter-tab:hover {
+                    color: var(--primary-color);
+                }
+                
+                .filter-tab.active {
+                    color: var(--primary-color);
+                    border-bottom-color: var(--primary-color);
+                }
+            </style>
+
+            <!-- Applications List -->
+            <div class="content-section">
+                <div class="section-header">
+                    <h2>Applications (<span id="applicationsCount">0</span>)</h2>
+                </div>
+                
+                <div id="applicationsList">
+                    <!-- Loading state -->
+                    <div class="empty-state">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Loading applications...</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- JavaScript Files -->
+    <script src="../../js/config.js"></script>
+    <script src="../../js/auth.js"></script>
+    <script src="../../js/api.js"></script>
+    <script src="../../js/my-applications.js"></script>
+</body>
+</html>

@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Applications - TrainUp</title>
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/dashboard.css">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <i class="fas fa-graduation-cap"></i>
+                    TrainUp
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="internships.html" class="nav-item">
+                    <i class="fas fa-briefcase"></i>
+                    <span>My Internships</span>
+                </a>
+                <a href="applications.html" class="nav-item active">
+                    <i class="fas fa-users"></i>
+                    <span>Applications</span>
+                </a>
+                <a href="create-internship.html" class="nav-item">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>Post Internship</span>
+                </a>
+                <a href="profile.html" class="nav-item">
+                    <i class="fas fa-building"></i>
+                    <span>Company Profile</span>
+                </a>
+                <a href="#" class="nav-item" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-avatar" id="userAvatar">C</div>
+                    <div class="user-info">
+                        <h4 id="companyName">Company</h4>
+                        <p id="userEmail">company@example.com</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="page-header">
+                <h1>Applications 👥</h1>
+                <p>Review and manage student applications</p>
+            </div>
+
+            <!-- Alert Messages -->
+            <div id="alertMessage" class="alert" style="display: none;"></div>
+
+            <!-- Filter Tabs -->
+            <div class="content-section">
+                <div style="display: flex; gap: 1rem; border-bottom: 2px solid var(--border-color); margin-bottom: 1.5rem;">
+                    <button class="filter-tab active" data-filter="all" onclick="filterApplications('all')">
+                        All Applications
+                    </button>
+                    <button class="filter-tab" data-filter="SUBMITTED" onclick="filterApplications('SUBMITTED')">
+                        New
+                    </button>
+                    <button class="filter-tab" data-filter="UNDER_REVIEW" onclick="filterApplications('UNDER_REVIEW')">
+                        Under Review
+                    </button>
+                    <button class="filter-tab" data-filter="SHORTLISTED" onclick="filterApplications('SHORTLISTED')">
+                        Shortlisted
+                    </button>
+                    <button class="filter-tab" data-filter="ACCEPTED" onclick="filterApplications('ACCEPTED')">
+                        Accepted
+                    </button>
+                    <button class="filter-tab" data-filter="REJECTED" onclick="filterApplications('REJECTED')">
+                        Rejected
+                    </button>
+                </div>
+            </div>
+
+            <style>
+                .filter-tab {
+                    background: none;
+                    border: none;
+                    padding: 0.75rem 1.5rem;
+                    font-size: 1rem;
+                    font-weight: 500;
+                    color: var(--text-secondary);
+                    cursor: pointer;
+                    border-bottom: 3px solid transparent;
+                    transition: var(--transition);
+                }
+                
+                .filter-tab:hover {
+                    color: var(--primary-color);
+                }
+                
+                .filter-tab.active {
+                    color: var(--primary-color);
+                    border-bottom-color: var(--primary-color);
+                }
+                
+                .student-card {
+                    background: var(--bg-primary);
+                    border: 1px solid var(--border-color);
+                    border-radius: var(--radius-lg);
+                    padding: 1.5rem;
+                    margin-bottom: 1rem;
+                    transition: var(--transition);
+                }
+                
+                .student-card:hover {
+                    box-shadow: var(--shadow-md);
+                    border-color: var(--primary-color);
+                }
+                
+                .student-header {
+                    display: flex;
+                    gap: 1rem;
+                    margin-bottom: 1rem;
+                }
+                
+                .student-avatar {
+                    width: 60px;
+                    height: 60px;
+                    border-radius: 50%;
+                    background: var(--primary-color);
+                    color: white;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 1.5rem;
+                    font-weight: 700;
+                    flex-shrink: 0;
+                }
+                
+                .student-info {
+                    flex: 1;
+                }
+                
+                .student-info h3 {
+                    margin-bottom: 0.25rem;
+                }
+                
+                .student-meta {
+                    display: flex;
+                    gap: 1.5rem;
+                    flex-wrap: wrap;
+                    margin: 1rem 0;
+                    font-size: 0.875rem;
+                    color: var(--text-secondary);
+                }
+                
+                .action-buttons {
+                    display: flex;
+                    gap: 0.75rem;
+                    flex-wrap: wrap;
+                    margin-top: 1rem;
+                    padding-top: 1rem;
+                    border-top: 1px solid var(--border-color);
+                }
+            </style>
+
+            <!-- Applications List -->
+            <div class="content-section">
+                <div class="section-header">
+                    <h2>Applications (<span id="applicationsCount">0</span>)</h2>
+                </div>
+                
+                <div id="applicationsList">
+                    <!-- Loading state -->
+                    <div class="empty-state">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Loading applications...</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Review Modal -->
+    <div class="modal" id="reviewModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Review Application</h2>
+                <button class="modal-close" onclick="closeReviewModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div id="applicationDetails"></div>
+                
+                <div class="form-group">
+                    <label for="companyNotes">
+                        <i class="fas fa-comment"></i>
+                        Notes (Optional)
+                    </label>
+                    <textarea 
+                        id="companyNotes" 
+                        rows="4"
+                        placeholder="Add notes about this candidate..."
+                    ></textarea>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeReviewModal()">
+                    Cancel
+                </button>
+                <button class="btn btn-outline" onclick="updateApplicationStatus('UNDER_REVIEW')" style="border-color: var(--warning-color); color: var(--warning-color);">
+                    <i class="fas fa-clock"></i>
+                    Mark Under Review
+                </button>
+                <button class="btn btn-outline" onclick="updateApplicationStatus('SHORTLISTED')" style="border-color: var(--info-color); color: var(--info-color);">
+                    <i class="fas fa-star"></i>
+                    Shortlist
+                </button>
+                <button class="btn btn-outline" onclick="updateApplicationStatus('REJECTED')" style="border-color: var(--danger-color); color: var(--danger-color);">
+                    <i class="fas fa-times"></i>
+                    Reject
+                </button>
+                <button class="btn btn-primary" onclick="updateApplicationStatus('ACCEPTED')">
+                    <i class="fas fa-check"></i>
+                    Accept
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Files -->
+    <script src="../../js/config.js"></script>
+    <script src="../../js/auth.js"></script>
+    <script src="../../js/api.js"></script>
+    <script src="../../js/company-applications.js"></script>
+</body>
+</html>
