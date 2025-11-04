@@ -233,8 +233,10 @@ function filterApplications(status) {
 function viewCV(applicationId) {
     const app = allApplications.find(a => a.id === applicationId);
     
+
     if (!app) return;
     
+
     if (app.cvUrl) {
         // Open URL in new tab
         window.open(app.cvUrl, '_blank');
@@ -252,6 +254,56 @@ function viewCV(applicationId) {
 }
 
 /**
+ * Build CV preview HTML for the review modal
+ */
+function getCVPreviewHTML(application) {
+    if (!application || (!application.cvFileData && !application.cvUrl)) {
+        return '';
+    }
+
+    const fileName = (application.cvFileName || '').toLowerCase();
+    let previewSource = '';
+    let canPreview = false;
+
+    if (application.cvFileData) {
+        const dataUrl = application.cvFileData;
+        if (dataUrl.startsWith('data:application/pdf')) {
+            previewSource = dataUrl;
+            canPreview = true;
+        } else if (!fileName && dataUrl.startsWith('data:')) {
+            // Attempt to infer from data URL when filename is missing
+            canPreview = dataUrl.startsWith('data:application/pdf');
+            if (canPreview) {
+                previewSource = dataUrl;
+            }
+        }
+    }
+
+    if (!canPreview && application.cvUrl) {
+        const lowerUrl = application.cvUrl.toLowerCase();
+        if (lowerUrl.includes('.pdf')) {
+            previewSource = application.cvUrl;
+            canPreview = true;
+        }
+    }
+
+    const previewContent = canPreview
+        ? `<iframe
+                src="${previewSource}"
+                title="CV Preview"
+                style="width: 100%; height: 420px; border: 1px solid var(--border-color); border-radius: var(--radius-md);"
+            ></iframe>`
+        : `<p style="color: var(--text-secondary);">Preview not available. Please use the button above to download or open the CV.</p>`;
+
+    return `
+        <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-color);">
+            <strong style="display: block; margin-bottom: 0.75rem;">CV Preview</strong>
+            ${previewContent}
+        </div>
+    `;
+}
+
+/**
  * Open review modal
  */
 function openReviewModal(applicationId) {
@@ -262,6 +314,7 @@ function openReviewModal(applicationId) {
     const student = selectedApplication.student || {};
     const internship = selectedApplication.internship || {};
     
+    // Display student details
     document.getElementById('applicationDetails').innerHTML = `
         <div style="background: var(--bg-secondary); padding: 1.5rem; border-radius: var(--radius-md); margin-bottom: 1.5rem;">
             <h3 style="margin-bottom: 1rem;">${student.firstName} ${student.lastName}</h3>
@@ -274,15 +327,6 @@ function openReviewModal(applicationId) {
                 <div><strong>Applied on:</strong> ${formatDate(selectedApplication.appliedDate)}</div>
             </div>
             
-            ${selectedApplication.cvFileData || selectedApplication.cvUrl ? `
-                <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-color);">
-                    <button class="btn btn-primary" onclick="viewCV('${selectedApplication.id}')" style="width: 100%;">
-                        <i class="fas fa-file-pdf"></i>
-                        Download/View CV (${selectedApplication.cvFileName || 'Resume'})
-                    </button>
-                </div>
-            ` : ''}
-            
             ${selectedApplication.coverLetter ? `
                 <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-color);">
                     <strong style="display: block; margin-bottom: 0.5rem;">Cover Letter:</strong>
@@ -294,8 +338,92 @@ function openReviewModal(applicationId) {
         </div>
     `;
     
+    // Display CV if available
+    displayCV();
+    
     document.getElementById('companyNotes').value = selectedApplication.companyNotes || '';
     document.getElementById('reviewModal').classList.add('active');
+}
+
+/**
+ * Display CV in modal
+ */
+function displayCV() {
+    const cvPreviewSection = document.getElementById('cvPreviewSection');
+    const pdfViewer = document.getElementById('pdfViewer');
+    const imageViewer = document.getElementById('imageViewer');
+    const urlViewer = document.getElementById('urlViewer');
+    
+    // Hide all viewers first
+    pdfViewer.style.display = 'none';
+    imageViewer.style.display = 'none';
+    urlViewer.style.display = 'none';
+    cvPreviewSection.style.display = 'none';
+    
+    if (!selectedApplication) return;
+    
+    // Check if CV file data exists (uploaded file)
+    if (selectedApplication.cvFileData) {
+        cvPreviewSection.style.display = 'block';
+        
+        const fileName = selectedApplication.cvFileName || 'CV';
+        document.getElementById('cvPreviewTitle').textContent = `CV Preview: ${fileName}`;
+        
+        // Check file type from base64 data
+        if (selectedApplication.cvFileData.includes('data:application/pdf')) {
+            // PDF file
+            pdfViewer.style.display = 'block';
+            document.getElementById('cvIframe').src = selectedApplication.cvFileData;
+        } else if (selectedApplication.cvFileData.includes('data:image/')) {
+            // Image file
+            imageViewer.style.display = 'block';
+            document.getElementById('cvImage').src = selectedApplication.cvFileData;
+        } else {
+            // Other file types - show download button
+            pdfViewer.style.display = 'block';
+            document.getElementById('cvIframe').style.display = 'none';
+            pdfViewer.innerHTML = `
+                <div style="padding: 3rem; text-align: center; background: var(--bg-secondary); border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                    <i class="fas fa-file" style="font-size: 4rem; color: var(--primary-color); margin-bottom: 1rem;"></i>
+                    <h3 style="margin-bottom: 0.5rem;">${fileName}</h3>
+                    <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Preview not available for this file type</p>
+                    <button class="btn btn-primary" onclick="downloadCV()">
+                        <i class="fas fa-download"></i>
+                        Download CV
+                    </button>
+                </div>
+            `;
+        }
+    } 
+    // Check if CV URL exists
+    else if (selectedApplication.cvUrl) {
+        cvPreviewSection.style.display = 'block';
+        document.getElementById('cvPreviewTitle').textContent = 'CV Link';
+        
+        urlViewer.style.display = 'block';
+        document.getElementById('cvExternalLink').href = selectedApplication.cvUrl;
+    }
+}
+
+/**
+ * Download CV
+ */
+function downloadCV() {
+    if (!selectedApplication) return;
+    
+    if (selectedApplication.cvFileData) {
+        const link = document.createElement('a');
+        link.href = selectedApplication.cvFileData;
+        link.download = selectedApplication.cvFileName || 'CV.pdf';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        showAlert('CV downloaded successfully!', 'success');
+    } else if (selectedApplication.cvUrl) {
+        window.open(selectedApplication.cvUrl, '_blank');
+    } else {
+        showAlert('CV not available', 'error');
+    }
 }
 
 /**

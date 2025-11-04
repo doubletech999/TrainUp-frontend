@@ -196,54 +196,99 @@
     </div>
 
     <!-- Review Modal -->
-    <div class="modal" id="reviewModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Review Application</h2>
-                <button class="modal-close" onclick="closeReviewModal()">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
+<div class="modal" id="reviewModal">
+    <div class="modal-content" style="max-width: 900px;">
+        <div class="modal-header">
+            <h2>Review Application</h2>
+            <button class="modal-close" onclick="closeReviewModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
 
-            <div class="modal-body">
-                <div id="applicationDetails"></div>
+        <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+            <div id="applicationDetails"></div>
+            
+            <!-- CV Preview Section -->
+            <div id="cvPreviewSection" style="display: none; margin-bottom: 1.5rem;">
+                <div style="background: var(--bg-secondary); padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <strong>
+                            <i class="fas fa-file-pdf"></i>
+                            <span id="cvPreviewTitle">CV Preview</span>
+                        </strong>
+                        <button class="btn btn-outline btn-sm" onclick="downloadCV()">
+                            <i class="fas fa-download"></i>
+                            Download
+                        </button>
+                    </div>
+                </div>
                 
-                <div class="form-group">
-                    <label for="companyNotes">
-                        <i class="fas fa-comment"></i>
-                        Notes (Optional)
-                    </label>
-                    <textarea 
-                        id="companyNotes" 
-                        rows="4"
-                        placeholder="Add notes about this candidate..."
-                    ></textarea>
+                <!-- PDF Viewer -->
+                <div id="pdfViewer" style="display: none;">
+                    <iframe 
+                        id="cvIframe" 
+                        style="width: 100%; height: 600px; border: 1px solid var(--border-color); border-radius: var(--radius-md);"
+                    ></iframe>
+                </div>
+                
+                <!-- Image Viewer -->
+                <div id="imageViewer" style="display: none;">
+                    <img 
+                        id="cvImage" 
+                        style="width: 100%; border: 1px solid var(--border-color); border-radius: var(--radius-md);"
+                        alt="CV Preview"
+                    />
+                </div>
+                
+                <!-- URL Link -->
+                <div id="urlViewer" style="display: none;">
+                    <div style="padding: 2rem; text-align: center; background: var(--bg-secondary); border-radius: var(--radius-md);">
+                        <i class="fas fa-external-link-alt" style="font-size: 3rem; color: var(--primary-color); margin-bottom: 1rem;"></i>
+                        <p style="margin-bottom: 1rem;">CV is hosted externally</p>
+                        <a id="cvExternalLink" href="#" target="_blank" class="btn btn-primary">
+                            <i class="fas fa-link"></i>
+                            Open CV Link
+                        </a>
+                    </div>
                 </div>
             </div>
-
-            <div class="modal-footer">
-                <button class="btn btn-outline" onclick="closeReviewModal()">
-                    Cancel
-                </button>
-                <button class="btn btn-outline" onclick="updateApplicationStatus('UNDER_REVIEW')" style="border-color: var(--warning-color); color: var(--warning-color);">
-                    <i class="fas fa-clock"></i>
-                    Mark Under Review
-                </button>
-                <button class="btn btn-outline" onclick="updateApplicationStatus('SHORTLISTED')" style="border-color: var(--info-color); color: var(--info-color);">
-                    <i class="fas fa-star"></i>
-                    Shortlist
-                </button>
-                <button class="btn btn-outline" onclick="updateApplicationStatus('REJECTED')" style="border-color: var(--danger-color); color: var(--danger-color);">
-                    <i class="fas fa-times"></i>
-                    Reject
-                </button>
-                <button class="btn btn-primary" onclick="updateApplicationStatus('ACCEPTED')">
-                    <i class="fas fa-check"></i>
-                    Accept
-                </button>
+            
+            <div class="form-group">
+                <label for="companyNotes">
+                    <i class="fas fa-comment"></i>
+                    Notes (Optional)
+                </label>
+                <textarea 
+                    id="companyNotes" 
+                    rows="4"
+                    placeholder="Add notes about this candidate..."
+                ></textarea>
             </div>
         </div>
+
+        <div class="modal-footer">
+            <button class="btn btn-outline" onclick="closeReviewModal()">
+                Cancel
+            </button>
+            <button class="btn btn-outline" onclick="updateApplicationStatus('UNDER_REVIEW')" style="border-color: var(--warning-color); color: var(--warning-color);">
+                <i class="fas fa-clock"></i>
+                Mark Under Review
+            </button>
+            <button class="btn btn-outline" onclick="updateApplicationStatus('SHORTLISTED')" style="border-color: var(--info-color); color: var(--info-color);">
+                <i class="fas fa-star"></i>
+                Shortlist
+            </button>
+            <button class="btn btn-outline" onclick="updateApplicationStatus('REJECTED')" style="border-color: var(--danger-color); color: var(--danger-color);">
+                <i class="fas fa-times"></i>
+                Reject
+            </button>
+            <button class="btn btn-primary" onclick="updateApplicationStatus('ACCEPTED')">
+                <i class="fas fa-check"></i>
+                Accept
+            </button>
+        </div>
     </div>
+</div>
 
     <!-- JavaScript Files -->
     <script src="../../js/config.js"></script>
