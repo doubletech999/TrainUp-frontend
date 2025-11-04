@@ -32,9 +32,13 @@
                     <i class="fas fa-briefcase"></i>
                     <span>Browse Internships</span>
                 </a>
-                <a href="my-applications.html" class="nav-item">
+                <a href="applications.html" class="nav-item">
                     <i class="fas fa-file-alt"></i>
                     <span>My Applications</span>
+                </a>
+                <a href="evaluations.html" class="nav-item">
+                    <i class="fas fa-star"></i>
+                    <span>My Evaluations</span>
                 </a>
                 <a href="profile.html" class="nav-item">
                     <i class="fas fa-user"></i>
@@ -50,7 +54,7 @@
                 <div class="user-profile">
                     <div class="user-avatar" id="userAvatar">S</div>
                     <div class="user-info">
-                        <h4 id="userName">Student</h4>
+                        <h4 id="studentName">Student</h4>
                         <p id="userEmail">student@example.com</p>
                     </div>
                 </div>
@@ -60,12 +64,21 @@
         <!-- Main Content -->
         <main class="main-content">
             <div class="page-header">
-                <h1>Welcome back, <span id="welcomeName">Student</span>! 👋</h1>
-                <p>Here's what's happening with your internship journey</p>
+                <div>
+                    <h1>Welcome back, <span id="welcomeName">Student</span>! 👋</h1>
+                    <p>Track your internship journey and discover new opportunities</p>
+                </div>
+                <a href="internships.html" class="btn btn-primary">
+                    <i class="fas fa-search"></i>
+                    Find Internships
+                </a>
             </div>
 
             <!-- Alert Messages -->
             <div id="alertMessage" class="alert" style="display: none;"></div>
+
+            <!-- Profile Completion Alert -->
+            <div id="profileAlert" style="display: none;"></div>
 
             <!-- Stats Cards -->
             <div class="stats-grid">
@@ -85,7 +98,7 @@
                     <div class="stat-card-header">
                         <div>
                             <div class="stat-value" id="pendingApplications">0</div>
-                            <div class="stat-label">Under Review</div>
+                            <div class="stat-label">Pending Review</div>
                         </div>
                         <div class="stat-card-icon warning">
                             <i class="fas fa-clock"></i>
@@ -118,11 +131,40 @@
                 </div>
             </div>
 
+            <!-- Quick Actions -->
+            <div class="content-section">
+                <div class="section-header">
+                    <h2>Quick Actions</h2>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                    <a href="internships.html" class="btn btn-primary" style="padding: 1.5rem; text-align: center; text-decoration: none;">
+                        <i class="fas fa-search" style="font-size: 2rem; display: block; margin-bottom: 0.5rem;"></i>
+                        Browse Internships
+                    </a>
+                    
+                    <a href="applications.html" class="btn btn-outline" style="padding: 1.5rem; text-align: center; text-decoration: none;">
+                        <i class="fas fa-file-alt" style="font-size: 2rem; display: block; margin-bottom: 0.5rem;"></i>
+                        My Applications
+                    </a>
+                    
+                    <a href="profile.html" class="btn btn-outline" style="padding: 1.5rem; text-align: center; text-decoration: none;">
+                        <i class="fas fa-user-edit" style="font-size: 2rem; display: block; margin-bottom: 0.5rem;"></i>
+                        Edit Profile
+                    </a>
+                    
+                    <a href="evaluations.html" class="btn btn-outline" style="padding: 1.5rem; text-align: center; text-decoration: none;">
+                        <i class="fas fa-star" style="font-size: 2rem; display: block; margin-bottom: 0.5rem;"></i>
+                        My Evaluations
+                    </a>
+                </div>
+            </div>
+
             <!-- Recent Applications -->
             <div class="content-section">
                 <div class="section-header">
                     <h2>Recent Applications</h2>
-                    <a href="my-applications.html" class="btn btn-outline btn-sm">View All</a>
+                    <a href="applications.html" class="btn btn-outline btn-sm">View All</a>
                 </div>
                 
                 <div id="recentApplications">
@@ -134,19 +176,43 @@
                 </div>
             </div>
 
-            <!-- Available Internships -->
+            <!-- Recommended Internships -->
             <div class="content-section">
                 <div class="section-header">
-                    <h2>Latest Internships</h2>
+                    <h2>Recommended For You</h2>
                     <a href="internships.html" class="btn btn-outline btn-sm">Browse All</a>
                 </div>
                 
-                <div id="latestInternships">
+                <div id="recommendedInternships">
                     <!-- Loading state -->
                     <div class="empty-state">
                         <i class="fas fa-spinner fa-spin"></i>
                         <p>Loading internships...</p>
                     </div>
+                </div>
+            </div>
+
+            <!-- Profile Completion Widget -->
+            <div class="content-section" id="profileCompletionSection" style="display: none;">
+                <div class="section-header">
+                    <h2>Complete Your Profile</h2>
+                </div>
+                
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2rem; border-radius: var(--radius-md);">
+                    <div style="display: flex; align-items: center; gap: 2rem; margin-bottom: 1.5rem;">
+                        <div style="flex: 1;">
+                            <h3 style="color: white; margin-bottom: 0.5rem;">Your profile is <span id="profilePercent">0</span>% complete</h3>
+                            <p style="opacity: 0.9; margin-bottom: 1rem;">Complete your profile to increase your chances of getting hired!</p>
+                            <div style="background: rgba(255,255,255,0.2); height: 8px; border-radius: 4px; overflow: hidden;">
+                                <div id="profileProgress" style="background: white; height: 100%; width: 0%; transition: width 0.5s;"></div>
+                            </div>
+                        </div>
+                        <a href="profile.html" class="btn" style="background: white; color: #667eea;">
+                            Complete Profile
+                        </a>
+                    </div>
+                    
+                    <div id="missingFields" style="display: grid; gap: 0.5rem; font-size: 0.875rem;"></div>
                 </div>
             </div>
         </main>
