@@ -22,6 +22,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Load dashboard data
     await loadDashboardData();
+    
+    // Start notification checks
+    checkNotifications();
+    setInterval(checkNotifications, 60000); // Check every minute
 });
 
 /**
@@ -102,7 +106,7 @@ function checkProfileCompletion(userData) {
                         <strong>Complete Your Profile</strong>
                         <p>Your profile is only ${completionPercent}% complete. Complete it to increase your chances!</p>
                     </div>
-                    <a href="profile.html" class="btn btn-sm btn-outline">
+                    <a href="edit-profile.html" class="btn btn-sm btn-outline">
                         Complete Now
                     </a>
                 </div>
@@ -343,4 +347,151 @@ function formatStatus(status) {
         'WITHDRAWN': 'Withdrawn'
     };
     return statusMap[status] || status;
+}
+
+/**
+ * Check for new notifications
+ */
+async function checkNotifications() {
+    try {
+        const response = await apiRequest('/notifications/unread-count', {
+            method: 'GET'
+        });
+        
+        if (response.success && response.data && response.data.count > 0) {
+            updateNotificationBadge(response.data.count);
+        } else {
+            updateNotificationBadge(0);
+        }
+    } catch (error) {
+        // Silent fail for notifications check
+        console.log('Could not check notifications');
+    }
+}
+
+/**
+ * Update notification badge in UI
+ */
+function updateNotificationBadge(count) {
+    // Try to find notification badge in sidebar
+    const notificationLink = document.querySelector('a[href="notifications.html"]');
+    
+    if (notificationLink) {
+        let badge = notificationLink.querySelector('.notification-badge');
+        
+        if (!badge && count > 0) {
+            badge = document.createElement('span');
+            badge.className = 'notification-badge';
+            badge.style.cssText = `
+                position: absolute;
+                top: 50%;
+                right: 1rem;
+                transform: translateY(-50%);
+                background: var(--danger-color);
+                color: white;
+                font-size: 0.75rem;
+                font-weight: 700;
+                padding: 0.125rem 0.5rem;
+                border-radius: 999px;
+                min-width: 20px;
+                text-align: center;
+            `;
+            notificationLink.style.position = 'relative';
+            notificationLink.appendChild(badge);
+        }
+        
+        if (badge) {
+            if (count > 0) {
+                badge.textContent = count > 99 ? '99+' : count;
+                badge.style.display = 'block';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+    }
+    
+    // Also update page title if there are notifications
+    if (count > 0) {
+        document.title = `(${count}) Dashboard - TrainUp`;
+    } else {
+        document.title = 'Dashboard - TrainUp';
+    }
+}
+
+// Initialize notification checks when page loads
+document.addEventListener('DOMContentLoaded', () => {
+    // Start checking notifications after initial load
+    setTimeout(() => {
+        checkNotifications();
+        setInterval(checkNotifications, 60000); // Check every minute
+    }, 2000);
+});
+
+/**
+ * Check for new notifications
+ */
+async function checkNotifications() {
+    try {
+        const response = await apiRequest('/notifications/unread-count', {
+            method: 'GET'
+        });
+        
+        if (response.success && response.data && response.data.count > 0) {
+            updateNotificationBadge(response.data.count);
+        } else {
+            updateNotificationBadge(0);
+        }
+    } catch (error) {
+        // Silent fail for notifications check
+        console.log('Could not check notifications');
+    }
+}
+
+/**
+ * Update notification badge in UI
+ */
+function updateNotificationBadge(count) {
+    // Try to find notification badge in sidebar
+    const notificationLink = document.querySelector('a[href="notifications.html"]');
+    
+    if (notificationLink) {
+        let badge = notificationLink.querySelector('.notification-badge');
+        
+        if (!badge && count > 0) {
+            badge = document.createElement('span');
+            badge.className = 'notification-badge';
+            badge.style.cssText = `
+                position: absolute;
+                top: 50%;
+                right: 1rem;
+                transform: translateY(-50%);
+                background: var(--danger-color);
+                color: white;
+                font-size: 0.75rem;
+                font-weight: 700;
+                padding: 0.125rem 0.5rem;
+                border-radius: 999px;
+                min-width: 20px;
+                text-align: center;
+            `;
+            notificationLink.style.position = 'relative';
+            notificationLink.appendChild(badge);
+        }
+        
+        if (badge) {
+            if (count > 0) {
+                badge.textContent = count > 99 ? '99+' : count;
+                badge.style.display = 'block';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+    }
+    
+    // Also update page title if there are notifications
+    if (count > 0) {
+        document.title = `(${count}) Dashboard - TrainUp`;
+    } else {
+        document.title = 'Dashboard - TrainUp';
+    }
 }

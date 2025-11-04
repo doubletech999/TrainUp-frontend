@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Evaluations - TrainUp</title>
+    
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        .evaluation-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: var(--transition);
+        }
+        
+        .evaluation-card:hover {
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary-color);
+        }
+        
+        .rating-stars {
+            display: flex;
+            gap: 0.25rem;
+            font-size: 1.25rem;
+        }
+        
+        .rating-stars .fa-star {
+            color: #FCD34D;
+        }
+        
+        .rating-stars .fa-star.empty {
+            color: var(--border-color);
+        }
+        
+        .rating-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .rating-item {
+            background: var(--bg-secondary);
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            text-align: center;
+        }
+        
+        .rating-item .rating-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.25rem;
+        }
+        
+        .rating-item .rating-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+        
+        .evaluation-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-full);
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        
+        .evaluation-badge.excellent {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+        
+        .evaluation-badge.good {
+            background: #DBEAFE;
+            color: #1E40AF;
+        }
+        
+        .evaluation-badge.average {
+            background: #FEF3C7;
+            color: #92400E;
+        }
+        
+        .evaluation-badge.poor {
+            background: #FEE2E2;
+            color: #991B1B;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <i class="fas fa-graduation-cap"></i>
+                    TrainUp
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="internships.html" class="nav-item">
+                    <i class="fas fa-briefcase"></i>
+                    <span>Browse Internships</span>
+                </a>
+                <a href="my-applications.html" class="nav-item">
+                    <i class="fas fa-file-alt"></i>
+                    <span>My Applications</span>
+                </a>
+                <a href="evaluations.html" class="nav-item active">
+                    <i class="fas fa-star"></i>
+                    <span>My Evaluations</span>
+                </a>
+                <a href="profile.html" class="nav-item">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+                <a href="#" class="nav-item" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-avatar" id="userAvatar">S</div>
+                    <div class="user-info">
+                        <h4 id="userName">Student</h4>
+                        <p id="userEmail">student@example.com</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="page-header">
+                <div>
+                    <h1>My Evaluations ⭐</h1>
+                    <p>Track your performance and feedback from supervisors and companies</p>
+                </div>
+            </div>
+
+            <div id="alertMessage" class="alert" style="display: none;"></div>
+
+            <!-- Overall Rating Summary -->
+            <div class="content-section">
+                <h2 style="margin-bottom: 1.5rem;">Overall Performance</h2>
+                <div class="rating-summary" id="ratingSummary">
+                    <div class="rating-item">
+                        <div class="rating-value" id="overallRating">-</div>
+                        <div class="rating-label">Overall Rating</div>
+                    </div>
+                    <div class="rating-item">
+                        <div class="rating-value" id="totalEvaluations">0</div>
+                        <div class="rating-label">Total Evaluations</div>
+                    </div>
+                    <div class="rating-item">
+                        <div class="rating-value" id="companyEvaluations">0</div>
+                        <div class="rating-label">Company Reviews</div>
+                    </div>
+                    <div class="rating-item">
+                        <div class="rating-value" id="supervisorEvaluations">0</div>
+                        <div class="rating-label">Supervisor Reviews</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filter Tabs -->
+            <div class="content-section">
+                <div style="display: flex; gap: 1rem; border-bottom: 2px solid var(--border-color); margin-bottom: 1.5rem; overflow-x: auto;">
+                    <button class="filter-tab active" data-filter="all" onclick="filterEvaluations('all')">
+                        All Evaluations
+                    </button>
+                    <button class="filter-tab" data-filter="COMPANY" onclick="filterEvaluations('COMPANY')">
+                        Company Reviews
+                    </button>
+                    <button class="filter-tab" data-filter="SUPERVISOR" onclick="filterEvaluations('SUPERVISOR')">
+                        Supervisor Reviews
+                    </button>
+                    <button class="filter-tab" data-filter="PENDING" onclick="filterEvaluations('PENDING')">
+                        Pending to Give
+                    </button>
+                </div>
+            </div>
+
+            <style>
+                .filter-tab {
+                    background: none;
+                    border: none;
+                    padding: 0.75rem 1.5rem;
+                    font-size: 1rem;
+                    font-weight: 500;
+                    color: var(--text-secondary);
+                    cursor: pointer;
+                    border-bottom: 3px solid transparent;
+                    transition: var(--transition);
+                    white-space: nowrap;
+                }
+                
+                .filter-tab:hover {
+                    color: var(--primary-color);
+                }
+                
+                .filter-tab.active {
+                    color: var(--primary-color);
+                    border-bottom-color: var(--primary-color);
+                }
+            </style>
+
+            <!-- Evaluations List -->
+            <div class="content-section">
+                <div class="section-header">
+                    <h2>Evaluations (<span id="evaluationsCount">0</span>)</h2>
+                </div>
+                
+                <div id="evaluationsList">
+                    <div class="empty-state">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Loading evaluations...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Companies to Evaluate -->
+            <div class="content-section" id="companiesToEvaluate" style="display: none;">
+                <div class="section-header">
+                    <h2>Companies Waiting for Your Review</h2>
+                </div>
+                
+                <div id="pendingCompaniesList"></div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Evaluation Details Modal -->
+    <div class="modal" id="evaluationModal">
+        <div class="modal-content" style="max-width: 700px;">
+            <div class="modal-header">
+                <h2>Evaluation Details</h2>
+                <button class="modal-close" onclick="closeEvaluationModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div id="evaluationDetails"></div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeEvaluationModal()">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../js/config.js"></script>
+    <script src="../../js/auth.js"></script>
+    <script src="../../js/api.js"></script>
+    <script src="../../js/evaluations.js"></script>
+</body>
+</html>

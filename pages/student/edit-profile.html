@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile - TrainUp</title>
+    
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        
+        .form-group-full {
+            grid-column: 1 / -1;
+        }
+        
+        .cv-upload-area {
+            border: 2px dashed var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            text-align: center;
+            background: var(--bg-secondary);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+        
+        .cv-upload-area:hover {
+            border-color: var(--primary-color);
+            background: rgba(79, 70, 229, 0.05);
+        }
+        
+        .cv-upload-area.drag-over {
+            border-color: var(--primary-color);
+            background: rgba(79, 70, 229, 0.1);
+        }
+        
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <i class="fas fa-graduation-cap"></i>
+                    TrainUp
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="internships.html" class="nav-item">
+                    <i class="fas fa-briefcase"></i>
+                    <span>Browse Internships</span>
+                </a>
+                <a href="my-applications.html" class="nav-item">
+                    <i class="fas fa-file-alt"></i>
+                    <span>My Applications</span>
+                </a>
+                <a href="evaluations.html" class="nav-item">
+                    <i class="fas fa-star"></i>
+                    <span>My Evaluations</span>
+                </a>
+                <a href="profile.html" class="nav-item active">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+                <a href="#" class="nav-item" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-avatar" id="userAvatar">S</div>
+                    <div class="user-info">
+                        <h4 id="studentName">Student</h4>
+                        <p id="userEmail">student@example.com</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="page-header">
+                <div>
+                    <h1>Edit Profile ✏️</h1>
+                    <p>Update your information to enhance your profile</p>
+                </div>
+                <a href="profile.html" class="btn btn-outline">
+                    <i class="fas fa-times"></i>
+                    Cancel
+                </a>
+            </div>
+
+            <div id="alertMessage" class="alert" style="display: none;"></div>
+
+            <form id="profileForm">
+                <div class="content-section">
+                    <h2 style="margin-bottom: 1.5rem;">Personal Information</h2>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="firstName">
+                                <i class="fas fa-user"></i>
+                                First Name *
+                            </label>
+                            <input type="text" id="firstName" required>
+                            <span class="error-message" id="firstNameError"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="lastName">
+                                <i class="fas fa-user"></i>
+                                Last Name *
+                            </label>
+                            <input type="text" id="lastName" required>
+                            <span class="error-message" id="lastNameError"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="studentId">
+                                <i class="fas fa-id-card"></i>
+                                Student ID *
+                            </label>
+                            <input type="text" id="studentId" required>
+                            <span class="error-message" id="studentIdError"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phoneNumber">
+                                <i class="fas fa-phone"></i>
+                                Phone Number
+                            </label>
+                            <input type="tel" id="phoneNumber" placeholder="+970599123456">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-section">
+                    <h2 style="margin-bottom: 1.5rem;">Academic Information</h2>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="university">
+                                <i class="fas fa-university"></i>
+                                University *
+                            </label>
+                            <input type="text" id="university" required>
+                            <span class="error-message" id="universityError"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="major">
+                                <i class="fas fa-graduation-cap"></i>
+                                Major *
+                            </label>
+                            <input type="text" id="major" required>
+                            <span class="error-message" id="majorError"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="yearOfStudy">
+                                <i class="fas fa-calendar"></i>
+                                Year of Study
+                            </label>
+                            <select id="yearOfStudy">
+                                <option value="">Select Year</option>
+                                <option value="1">Year 1</option>
+                                <option value="2">Year 2</option>
+                                <option value="3">Year 3</option>
+                                <option value="4">Year 4</option>
+                                <option value="5">Year 5+</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="gpa">
+                                <i class="fas fa-chart-line"></i>
+                                GPA
+                            </label>
+                            <input type="number" id="gpa" step="0.01" min="0" max="4" placeholder="e.g., 3.5">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-section">
+                    <h2 style="margin-bottom: 1.5rem;">About & Skills</h2>
+                    
+                    <div class="form-grid">
+                        <div class="form-group form-group-full">
+                            <label for="bio">
+                                <i class="fas fa-align-left"></i>
+                                Bio / About Me
+                            </label>
+                            <textarea id="bio" rows="6" placeholder="Tell us about yourself, your goals, and what makes you unique..."></textarea>
+                        </div>
+
+                        <div class="form-group form-group-full">
+                            <label for="skills">
+                                <i class="fas fa-tools"></i>
+                                Skills (comma separated)
+                            </label>
+                            <textarea id="skills" rows="3" placeholder="e.g., JavaScript, Python, React, Communication, Problem Solving"></textarea>
+                            <small>Separate skills with commas</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-section">
+                    <h2 style="margin-bottom: 1.5rem;">Social Links</h2>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="linkedinUrl">
+                                <i class="fab fa-linkedin"></i>
+                                LinkedIn URL
+                            </label>
+                            <input type="url" id="linkedinUrl" placeholder="https://linkedin.com/in/yourprofile">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="githubUrl">
+                                <i class="fab fa-github"></i>
+                                GitHub URL
+                            </label>
+                            <input type="url" id="githubUrl" placeholder="https://github.com/yourusername">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-section">
+                    <h2 style="margin-bottom: 1.5rem;">CV/Resume</h2>
+                    
+                    <div id="cvStatus" style="display: none; margin-bottom: 1rem; padding: 1rem; background: var(--bg-secondary); border-radius: var(--radius-md); border-left: 4px solid var(--success-color);">
+                        <div style="display: flex; align-items: center; justify-content: space-between;">
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <i class="fas fa-check-circle" style="font-size: 1.5rem; color: var(--success-color);"></i>
+                                <div>
+                                    <strong id="cvFileName">CV uploaded</strong>
+                                    <div style="font-size: 0.875rem; color: var(--text-secondary); margin-top: 0.25rem;">Current CV is ready</div>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-outline btn-sm" onclick="document.getElementById('cvInput').click()">
+                                Update CV
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="cv-upload-area" id="cvUploadArea" onclick="document.getElementById('cvInput').click()">
+                        <i class="fas fa-cloud-upload-alt" style="font-size: 3rem; color: var(--primary-color); margin-bottom: 1rem;"></i>
+                        <h3 style="margin-bottom: 0.5rem;">
+                            <span id="uploadCVButtonText">Upload Your CV</span>
+                        </h3>
+                        <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                            Click to browse or drag and drop your file here
+                        </p>
+                        <p style="font-size: 0.875rem; color: var(--text-light);">
+                            Supported formats: PDF, DOC, DOCX (Max 5MB)
+                        </p>
+                    </div>
+                    
+                    <input 
+                        type="file" 
+                        id="cvInput" 
+                        accept=".pdf,.doc,.docx"
+                        style="display: none;"
+                        onchange="handleCVUpload(event)"
+                    >
+                </div>
+
+                <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem;">
+                    <a href="profile.html" class="btn btn-outline">
+                        Cancel
+                    </a>
+                    <button type="submit" class="btn btn-primary" id="saveBtn">
+                        <span id="saveBtnText">
+                            <i class="fas fa-save"></i>
+                            Save Changes
+                        </span>
+                        <span id="saveBtnLoader" class="loader" style="display: none;"></span>
+                    </button>
+                </div>
+            </form>
+        </main>
+    </div>
+
+    <script src="../../js/config.js"></script>
+    <script src="../../js/auth.js"></script>
+    <script src="../../js/api.js"></script>
+    <script src="../../js/profile.js"></script>
+</body>
+</html>
