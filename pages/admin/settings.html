@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Settings - Admin - TrainUp</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <i class="fas fa-graduation-cap"></i>
+                    TrainUp
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="users.html" class="nav-item">
+                    <i class="fas fa-users"></i>
+                    <span>User Management</span>
+                </a>
+                <a href="internships.html" class="nav-item">
+                    <i class="fas fa-briefcase"></i>
+                    <span>Internships Review</span>
+                </a>
+                <a href="companies.html" class="nav-item">
+                    <i class="fas fa-building"></i>
+                    <span>Companies</span>
+                </a>
+                <a href="reports.html" class="nav-item">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Reports & Analytics</span>
+                </a>
+                <a href="settings.html" class="nav-item active">
+                    <i class="fas fa-cog"></i>
+                    <span>System Settings</span>
+                </a>
+                <a href="notifications.html" class="nav-item">
+                    <i class="fas fa-bell"></i>
+                    <span>Notifications</span>
+                </a>
+                <a href="#" class="nav-item" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-avatar" id="userAvatar">A</div>
+                    <div class="user-info">
+                        <h4 id="userName">Administrator</h4>
+                        <p id="userEmail">admin@trainup.com</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="page-header">
+                <div>
+                    <h1>System Settings ⚙️</h1>
+                    <p>Configure system-wide settings and preferences</p>
+                </div>
+            </div>
+
+            <div id="alertMessage" class="alert" style="display: none;"></div>
+
+            <!-- General Settings -->
+            <div class="content-section">
+                <h3 style="margin-bottom: 1.5rem;">General Settings</h3>
+                <form id="generalSettingsForm">
+                    <div class="form-grid">
+                        <div class="form-group form-group-full">
+                            <label for="siteName">
+                                <i class="fas fa-globe"></i>
+                                Site Name
+                            </label>
+                            <input type="text" id="siteName" value="TrainUp">
+                        </div>
+                        <div class="form-group form-group-full">
+                            <label for="siteDescription">
+                                <i class="fas fa-align-left"></i>
+                                Site Description
+                            </label>
+                            <textarea id="siteDescription" rows="3">Connect students with internship opportunities</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="maintenanceMode">
+                                <i class="fas fa-wrench"></i>
+                                Maintenance Mode
+                            </label>
+                            <select id="maintenanceMode">
+                                <option value="false">Disabled</option>
+                                <option value="true">Enabled</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="registrationEnabled">
+                                <i class="fas fa-user-plus"></i>
+                                User Registration
+                            </label>
+                            <select id="registrationEnabled">
+                                <option value="true">Enabled</option>
+                                <option value="false">Disabled</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem;">
+                        <button type="button" class="btn btn-outline" onclick="resetForm('generalSettingsForm')">Reset</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i>
+                            Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Email Settings -->
+            <div class="content-section">
+                <h3 style="margin-bottom: 1.5rem;">Email Configuration</h3>
+                <form id="emailSettingsForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="smtpHost">SMTP Host</label>
+                            <input type="text" id="smtpHost" placeholder="smtp.example.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="smtpPort">SMTP Port</label>
+                            <input type="number" id="smtpPort" placeholder="587">
+                        </div>
+                        <div class="form-group">
+                            <label for="smtpUser">SMTP Username</label>
+                            <input type="text" id="smtpUser">
+                        </div>
+                        <div class="form-group">
+                            <label for="smtpPassword">SMTP Password</label>
+                            <input type="password" id="smtpPassword">
+                        </div>
+                        <div class="form-group form-group-full">
+                            <label for="fromEmail">From Email Address</label>
+                            <input type="email" id="fromEmail" placeholder="noreply@trainup.com">
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem;">
+                        <button type="button" class="btn btn-outline" onclick="testEmail()">
+                            <i class="fas fa-paper-plane"></i>
+                            Send Test Email
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i>
+                            Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Notification Settings -->
+            <div class="content-section">
+                <h3 style="margin-bottom: 1.5rem;">Notification Settings</h3>
+                <div style="display: grid; gap: 1rem;">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="emailNotifications" checked>
+                        <span>Enable email notifications</span>
+                    </label>
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="pushNotifications" checked>
+                        <span>Enable push notifications</span>
+                    </label>
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="smsNotifications">
+                        <span>Enable SMS notifications</span>
+                    </label>
+                </div>
+                <button type="button" class="btn btn-primary" onclick="saveNotificationSettings()" style="margin-top: 1.5rem;">
+                    <i class="fas fa-save"></i>
+                    Save Changes
+                </button>
+            </div>
+
+            <!-- Security Settings -->
+            <div class="content-section">
+                <h3 style="margin-bottom: 1.5rem;">Security Settings</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="sessionTimeout">Session Timeout (minutes)</label>
+                        <input type="number" id="sessionTimeout" value="30" min="5" max="120">
+                    </div>
+                    <div class="form-group">
+                        <label for="maxLoginAttempts">Max Login Attempts</label>
+                        <input type="number" id="maxLoginAttempts" value="5" min="3" max="10">
+                    </div>
+                    <div class="form-group">
+                        <label for="passwordMinLength">Min Password Length</label>
+                        <input type="number" id="passwordMinLength" value="8" min="6" max="20">
+                    </div>
+                </div>
+                <button type="button" class="btn btn-primary" onclick="saveSecuritySettings()" style="margin-top: 1.5rem;">
+                    <i class="fas fa-save"></i>
+                    Save Changes
+                </button>
+            </div>
+
+            <!-- System Info -->
+            <div class="content-section">
+                <h3 style="margin-bottom: 1.5rem;">System Information</h3>
+                <div style="display: grid; gap: 0.75rem;">
+                    <div style="display: flex; justify-content: space-between; padding: 0.75rem; background: var(--bg-secondary); border-radius: var(--radius-md);">
+                        <strong>Version:</strong>
+                        <span>1.0.0</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 0.75rem; background: var(--bg-secondary); border-radius: var(--radius-md);">
+                        <strong>Database Status:</strong>
+                        <span style="color: #10b981;"><i class="fas fa-check-circle"></i> Connected</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 0.75rem; background: var(--bg-secondary); border-radius: var(--radius-md);">
+                        <strong>Last Backup:</strong>
+                        <span>2025-01-05 10:30 AM</span>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 0.75rem; margin-top: 1.5rem;">
+                    <button class="btn btn-outline" onclick="performBackup()">
+                        <i class="fas fa-database"></i>
+                        Create Backup
+                    </button>
+                    <button class="btn btn-outline" onclick="clearCache()">
+                        <i class="fas fa-trash"></i>
+                        Clear Cache
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <style>
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+        }
+        .checkbox-container input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+    </style>
+
+    <script src="../../js/config.js"></script>
+    <script src="../../js/auth.js"></script>
+    <script src="../../js/api.js"></script>
+    <script src="../../js/notifications-handler.js"></script>
+    <script src="../../js/admin-settings.js"></script>
+</body>
+</html>

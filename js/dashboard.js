@@ -357,9 +357,15 @@ async function checkNotifications() {
         const response = await apiRequest('/notifications/unread-count', {
             method: 'GET'
         });
-        
-        if (response.success && response.data && response.data.count > 0) {
-            updateNotificationBadge(response.data.count);
+
+        if (response.success && response.data) {
+            const count = response.data.count || 0;
+            updateNotificationBadge(count);
+
+            // If there are new notifications, fetch recent ones for preview
+            if (count > 0) {
+                await fetchRecentNotifications();
+            }
         } else {
             updateNotificationBadge(0);
         }
@@ -370,93 +376,41 @@ async function checkNotifications() {
 }
 
 /**
- * Update notification badge in UI
+ * Fetch recent notifications for preview
  */
-function updateNotificationBadge(count) {
-    // Try to find notification badge in sidebar
-    const notificationLink = document.querySelector('a[href="notifications.html"]');
-    
-    if (notificationLink) {
-        let badge = notificationLink.querySelector('.notification-badge');
-        
-        if (!badge && count > 0) {
-            badge = document.createElement('span');
-            badge.className = 'notification-badge';
-            badge.style.cssText = `
-                position: absolute;
-                top: 50%;
-                right: 1rem;
-                transform: translateY(-50%);
-                background: var(--danger-color);
-                color: white;
-                font-size: 0.75rem;
-                font-weight: 700;
-                padding: 0.125rem 0.5rem;
-                border-radius: 999px;
-                min-width: 20px;
-                text-align: center;
-            `;
-            notificationLink.style.position = 'relative';
-            notificationLink.appendChild(badge);
-        }
-        
-        if (badge) {
-            if (count > 0) {
-                badge.textContent = count > 99 ? '99+' : count;
-                badge.style.display = 'block';
-            } else {
-                badge.style.display = 'none';
-            }
-        }
-    }
-    
-    // Also update page title if there are notifications
-    if (count > 0) {
-        document.title = `(${count}) Dashboard - TrainUp`;
-    } else {
-        document.title = 'Dashboard - TrainUp';
-    }
-}
-
-// Initialize notification checks when page loads
-document.addEventListener('DOMContentLoaded', () => {
-    // Start checking notifications after initial load
-    setTimeout(() => {
-        checkNotifications();
-        setInterval(checkNotifications, 60000); // Check every minute
-    }, 2000);
-});
-
-/**
- * Check for new notifications
- */
-async function checkNotifications() {
+async function fetchRecentNotifications() {
     try {
-        const response = await apiRequest('/notifications/unread-count', {
+        const response = await apiRequest('/notifications/recent?limit=5', {
             method: 'GET'
         });
-        
-        if (response.success && response.data && response.data.count > 0) {
-            updateNotificationBadge(response.data.count);
-        } else {
-            updateNotificationBadge(0);
+
+        if (response.success && response.data && response.data.length > 0) {
+            showNotificationPreview(response.data);
         }
     } catch (error) {
-        // Silent fail for notifications check
-        console.log('Could not check notifications');
+        console.log('Could not fetch recent notifications');
     }
+}
+
+/**
+ * Show notification preview (optional - can be displayed in a dropdown)
+ */
+function showNotificationPreview(notifications) {
+    // This function can be used to display notifications in a dropdown menu
+    // Implementation depends on your UI design
+    console.log('Recent notifications:', notifications);
 }
 
 /**
  * Update notification badge in UI
  */
 function updateNotificationBadge(count) {
-    // Try to find notification badge in sidebar
+    // Update sidebar notification badge
     const notificationLink = document.querySelector('a[href="notifications.html"]');
-    
+
     if (notificationLink) {
         let badge = notificationLink.querySelector('.notification-badge');
-        
+
         if (!badge && count > 0) {
             badge = document.createElement('span');
             badge.className = 'notification-badge';
@@ -473,25 +427,194 @@ function updateNotificationBadge(count) {
                 border-radius: 999px;
                 min-width: 20px;
                 text-align: center;
+                animation: pulse 2s infinite;
             `;
             notificationLink.style.position = 'relative';
             notificationLink.appendChild(badge);
         }
-        
+
         if (badge) {
             if (count > 0) {
                 badge.textContent = count > 99 ? '99+' : count;
                 badge.style.display = 'block';
+                // Add pulse animation for new notifications
+                badge.style.animation = 'pulse 2s infinite';
             } else {
                 badge.style.display = 'none';
             }
         }
     }
-    
-    // Also update page title if there are notifications
+
+    // Update header notification icon if exists
+    const headerNotificationIcon = document.querySelector('.header-notifications');
+    if (headerNotificationIcon) {
+        updateHeaderNotificationBadge(headerNotificationIcon, count);
+    }
+
+    // Update page title with notification count
     if (count > 0) {
         document.title = `(${count}) Dashboard - TrainUp`;
     } else {
         document.title = 'Dashboard - TrainUp';
     }
 }
+
+/**
+ * Update header notification badge
+ */
+function updateHeaderNotificationBadge(headerElement, count) {
+    let headerBadge = headerElement.querySelector('.notification-count');
+
+    if (!headerBadge && count > 0) {
+        headerBadge = document.createElement('span');
+        headerBadge.className = 'notification-count';
+        headerBadge.style.cssText = `
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--danger-color);
+            color: white;
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 0.125rem 0.375rem;
+            border-radius: 999px;
+            min-width: 18px;
+            text-align: center;
+        `;
+        headerElement.style.position = 'relative';
+        headerElement.appendChild(headerBadge);
+    }
+
+    if (headerBadge) {
+        if (count > 0) {
+            headerBadge.textContent = count > 99 ? '99+' : count;
+            headerBadge.style.display = 'block';
+        } else {
+            headerBadge.style.display = 'none';
+        }
+    }
+}
+
+/**
+ * Mark notification as read
+ */
+async function markNotificationAsRead(notificationId) {
+    try {
+        const response = await apiRequest(`/notifications/${notificationId}/read`, {
+            method: 'PUT'
+        });
+
+        if (response.success) {
+            // Refresh notification count
+            await checkNotifications();
+        }
+    } catch (error) {
+        console.error('Error marking notification as read:', error);
+    }
+}
+
+/**
+ * Mark all notifications as read
+ */
+async function markAllNotificationsAsRead() {
+    try {
+        const response = await apiRequest('/notifications/mark-all-read', {
+            method: 'PUT'
+        });
+
+        if (response.success) {
+            updateNotificationBadge(0);
+            showAlert('All notifications marked as read', 'success');
+        }
+    } catch (error) {
+        console.error('Error marking all notifications as read:', error);
+        showAlert('Failed to mark notifications as read', 'error');
+    }
+}
+
+/**
+ * Display notification toast
+ */
+function showNotificationToast(notification) {
+    // Create toast element
+    const toast = document.createElement('div');
+    toast.className = 'notification-toast';
+    toast.style.cssText = `
+        position: fixed;
+        top: 2rem;
+        right: 2rem;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        padding: 1rem 1.5rem;
+        min-width: 300px;
+        max-width: 400px;
+        z-index: 10000;
+        animation: slideInRight 0.3s ease-out;
+        border-left: 4px solid var(--primary-color);
+    `;
+
+    toast.innerHTML = `
+        <div style="display: flex; align-items: start; gap: 1rem;">
+            <i class="fas fa-bell" style="color: var(--primary-color); margin-top: 0.25rem;"></i>
+            <div style="flex: 1;">
+                <h4 style="margin: 0 0 0.5rem 0; font-size: 0.95rem; color: var(--text-primary);">
+                    ${notification.title || 'New Notification'}
+                </h4>
+                <p style="margin: 0; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">
+                    ${notification.message}
+                </p>
+            </div>
+            <button onclick="this.parentElement.parentElement.remove()"
+                    style="background: none; border: none; cursor: pointer; color: var(--text-secondary); font-size: 1.25rem; padding: 0;">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    `;
+
+    document.body.appendChild(toast);
+
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+        toast.style.animation = 'slideOutRight 0.3s ease-out';
+        setTimeout(() => toast.remove(), 300);
+    }, 5000);
+}
+
+// Add CSS animations for notifications
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes pulse {
+        0%, 100% {
+            transform: translateY(-50%) scale(1);
+            opacity: 1;
+        }
+        50% {
+            transform: translateY(-50%) scale(1.1);
+            opacity: 0.8;
+        }
+    }
+
+    @keyframes slideInRight {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    @keyframes slideOutRight {
+        from {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        to {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+    }
+`;
+document.head.appendChild(style);

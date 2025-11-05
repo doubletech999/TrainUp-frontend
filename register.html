@@ -15,7 +15,7 @@
     <style>
         .user-type-selector {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 1rem;
             margin-bottom: 2rem;
         }
@@ -65,9 +65,15 @@
             display: block;
         }
         
-        @media (max-width: 480px) {
+        @media (max-width: 768px) {
             .user-type-selector {
                 grid-template-columns: 1fr;
+            }
+        }
+
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .user-type-selector {
+                grid-template-columns: repeat(3, 1fr);
             }
         }
     </style>
@@ -93,8 +99,8 @@
                         <span>Companies: Hire Talented Interns</span>
                     </div>
                     <div class="feature">
-                        <i class="fas fa-shield-alt"></i>
-                        <span>Secure & Easy to Use</span>
+                        <i class="fas fa-user-tie"></i>
+                        <span>Supervisors: Monitor & Guide</span>
                     </div>
                 </div>
             </div>
@@ -124,11 +130,17 @@
                                 <h3>Student</h3>
                                 <p>Looking for internships</p>
                             </div>
-                            
+
                             <div class="user-type-card" onclick="selectUserType('COMPANY')">
                                 <i class="fas fa-building"></i>
                                 <h3>Company</h3>
                                 <p>Hiring interns</p>
+                            </div>
+
+                            <div class="user-type-card" onclick="selectUserType('SUPERVISOR')">
+                                <i class="fas fa-user-tie"></i>
+                                <h3>Supervisor</h3>
+                                <p>Academic supervision</p>
                             </div>
                         </div>
                         
@@ -351,6 +363,80 @@
                                     Company Description
                                 </label>
                                 <textarea id="description" rows="3" placeholder="Brief description of your company..."></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Supervisor Profile -->
+                        <div id="supervisorProfile" class="profile-section">
+                            <div class="form-group">
+                                <label for="supervisorFirstName">
+                                    <i class="fas fa-user"></i>
+                                    First Name *
+                                </label>
+                                <input type="text" id="supervisorFirstName" placeholder="Enter your first name">
+                                <span class="error-message" id="supervisorFirstNameError"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="supervisorLastName">
+                                    <i class="fas fa-user"></i>
+                                    Last Name *
+                                </label>
+                                <input type="text" id="supervisorLastName" placeholder="Enter your last name">
+                                <span class="error-message" id="supervisorLastNameError"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="employeeId">
+                                    <i class="fas fa-id-badge"></i>
+                                    Employee ID *
+                                </label>
+                                <input type="text" id="employeeId" placeholder="e.g., SUP2025001">
+                                <span class="error-message" id="employeeIdError"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="supervisorUniversity">
+                                    <i class="fas fa-university"></i>
+                                    University *
+                                </label>
+                                <input type="text" id="supervisorUniversity" placeholder="e.g., An-Najah University">
+                                <span class="error-message" id="supervisorUniversityError"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="department">
+                                    <i class="fas fa-building"></i>
+                                    Department *
+                                </label>
+                                <input type="text" id="department" placeholder="e.g., Computer Science Department">
+                                <span class="error-message" id="departmentError"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="position">
+                                    <i class="fas fa-briefcase"></i>
+                                    Position/Title *
+                                </label>
+                                <input type="text" id="position" placeholder="e.g., Professor, Dr., Lecturer">
+                                <span class="error-message" id="positionError"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="supervisorPhone">
+                                    <i class="fas fa-phone"></i>
+                                    Phone Number *
+                                </label>
+                                <input type="tel" id="supervisorPhone" placeholder="+970599123456">
+                                <span class="error-message" id="supervisorPhoneError"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="officeLocation">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    Office Location
+                                </label>
+                                <input type="text" id="officeLocation" placeholder="e.g., Building A, Room 302">
                             </div>
                         </div>
 

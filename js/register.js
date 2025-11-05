@@ -23,15 +23,26 @@ document.addEventListener('DOMContentLoaded', () => {
 function selectUserType(userType) {
     selectedUserType = userType;
     document.getElementById('userType').value = userType;
-    
-    // Update UI
+
+    // Update UI - remove active from all cards
     document.querySelectorAll('.user-type-card').forEach(card => {
         card.classList.remove('active');
     });
-    event.target.closest('.user-type-card').classList.add('active');
-    
+
+    // Add active to the selected card based on userType
+    const cards = document.querySelectorAll('.user-type-card');
+    cards.forEach(card => {
+        if (card.querySelector('h3').textContent === 'Student' && userType === 'STUDENT') {
+            card.classList.add('active');
+        } else if (card.querySelector('h3').textContent === 'Company' && userType === 'COMPANY') {
+            card.classList.add('active');
+        } else if (card.querySelector('h3').textContent === 'Supervisor' && userType === 'SUPERVISOR') {
+            card.classList.add('active');
+        }
+    });
+
     clearFieldError('userType');
-    
+
     // Auto advance to next step
     setTimeout(() => goToStep(2), 300);
 }
@@ -60,11 +71,13 @@ function goToStep(step) {
         document.querySelectorAll('.profile-section').forEach(section => {
             section.classList.remove('active');
         });
-        
+
         if (selectedUserType === 'STUDENT') {
             document.getElementById('studentProfile').classList.add('active');
         } else if (selectedUserType === 'COMPANY') {
             document.getElementById('companyProfile').classList.add('active');
+        } else if (selectedUserType === 'SUPERVISOR') {
+            document.getElementById('supervisorProfile').classList.add('active');
         }
     }
 }
@@ -220,8 +233,62 @@ async function handleRegister(event) {
             website: document.getElementById('website').value.trim() || null,
             description: document.getElementById('description').value.trim() || null
         };
+
+    } else if (selectedUserType === 'SUPERVISOR') {
+        const firstName = document.getElementById('supervisorFirstName').value.trim();
+        const lastName = document.getElementById('supervisorLastName').value.trim();
+        const employeeId = document.getElementById('employeeId').value.trim();
+        const university = document.getElementById('supervisorUniversity').value.trim();
+        const department = document.getElementById('department').value.trim();
+        const position = document.getElementById('position').value.trim();
+        const phoneNumber = document.getElementById('supervisorPhone').value.trim();
+
+        // Validate required fields
+        let isValid = true;
+
+        if (!firstName) {
+            showFieldError('supervisorFirstName', 'First name is required');
+            isValid = false;
+        }
+        if (!lastName) {
+            showFieldError('supervisorLastName', 'Last name is required');
+            isValid = false;
+        }
+        if (!employeeId) {
+            showFieldError('employeeId', 'Employee ID is required');
+            isValid = false;
+        }
+        if (!university) {
+            showFieldError('supervisorUniversity', 'University is required');
+            isValid = false;
+        }
+        if (!department) {
+            showFieldError('department', 'Department is required');
+            isValid = false;
+        }
+        if (!position) {
+            showFieldError('position', 'Position/Title is required');
+            isValid = false;
+        }
+        if (!phoneNumber) {
+            showFieldError('supervisorPhone', 'Phone number is required');
+            isValid = false;
+        }
+
+        if (!isValid) return;
+
+        registerData.supervisorProfile = {
+            firstName: firstName,
+            lastName: lastName,
+            employeeId: employeeId,
+            university: university,
+            department: department,
+            position: position,
+            phoneNumber: phoneNumber,
+            officeLocation: document.getElementById('officeLocation').value.trim() || null
+        };
     }
-    
+
     // Show loading state
     setButtonLoading('registerBtn', true, 'Create Account');
     
