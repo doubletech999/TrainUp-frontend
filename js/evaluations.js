@@ -20,7 +20,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     loadUserInfo(userData);
     await loadEvaluations();
-    await loadPendingCompanies();
+    // ❌ Disabled: pending companies endpoint not in backend yet
+    // await loadPendingCompanies();
 });
 
 function loadUserInfo(userData) {
@@ -36,9 +37,13 @@ function loadUserInfo(userData) {
     }
 }
 
+/**
+ * Load evaluations - ✅ BACKEND ENDPOINT EXISTS
+ */
 async function loadEvaluations() {
     try {
-        const response = await apiRequest('/evaluations/my-evaluations', {
+        // ✅ Backend endpoint: GET /evaluations/student/my-evaluations
+        const response = await apiRequest('/evaluations/student/my-evaluations', {
             method: 'GET'
         });
 
@@ -66,7 +71,19 @@ async function loadEvaluations() {
     }
 }
 
+/**
+ * Load pending companies - ❌ BACKEND ENDPOINT NOT IMPLEMENTED
+ */
 async function loadPendingCompanies() {
+    // This feature requires a new backend endpoint
+    // For now, hide the section
+    const section = document.getElementById('companiesToEvaluate');
+    if (section) {
+        section.style.display = 'none';
+    }
+    return;
+    
+    /* TODO: Implement in backend
     try {
         const response = await apiRequest('/evaluations/pending-companies', {
             method: 'GET'
@@ -80,6 +97,7 @@ async function loadPendingCompanies() {
     } catch (error) {
         console.error('Error loading pending companies:', error);
     }
+    */
 }
 
 function updateRatingSummary() {
@@ -140,6 +158,8 @@ function displayEvaluations(evaluations) {
         const rating = evaluation.overallRating || 0;
         const badge = getPerformanceBadge(rating);
         const isCompany = evaluation.evaluatorType === 'COMPANY';
+        const evaluator = evaluation.evaluator || {};
+        const internship = evaluation.internship || {};
         
         return `
             <div class="evaluation-card">
@@ -147,7 +167,7 @@ function displayEvaluations(evaluations) {
                     <div style="flex: 1;">
                         <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem;">
                             <h3 style="margin: 0;">
-                                ${isCompany ? evaluation.company?.name || 'Company' : 'Academic Supervisor'}
+                                ${evaluator.name || (isCompany ? 'Company' : 'Academic Supervisor')}
                             </h3>
                             ${badge}
                         </div>
@@ -156,7 +176,7 @@ function displayEvaluations(evaluations) {
                             <span>${isCompany ? 'Company Evaluation' : 'Supervisor Evaluation'}</span>
                             <span>•</span>
                             <i class="fas fa-calendar"></i>
-                            <span>${formatDate(evaluation.evaluationDate)}</span>
+                            <span>${formatDate(evaluation.createdAt)}</span>
                         </div>
                     </div>
                     
@@ -170,12 +190,13 @@ function displayEvaluations(evaluations) {
                     </div>
                 </div>
 
-                ${evaluation.internship ? `
+                ${internship.title ? `
                     <div style="padding: 1rem; background: var(--bg-secondary); border-radius: var(--radius-md); margin-bottom: 1rem;">
                         <strong style="display: block; margin-bottom: 0.25rem;">
                             <i class="fas fa-briefcase"></i> Internship Position
                         </strong>
-                        <span>${evaluation.internship.title}</span>
+                        <span>${internship.title}</span>
+                        ${internship.company ? `<span style="color: var(--text-secondary);"> • ${internship.company}</span>` : ''}
                     </div>
                 ` : ''}
 
@@ -197,20 +218,20 @@ function displayEvaluations(evaluations) {
                             <div style="font-size: 0.75rem; color: var(--text-secondary);">Communication</div>
                         </div>
                     ` : ''}
-                    ${evaluation.teamwork ? `
-                        <div style="text-align: center; padding: 0.75rem; background: var(--bg-secondary); border-radius: var(--radius-md);">
-                            <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary-color); margin-bottom: 0.25rem;">
-                                ${evaluation.teamwork}
-                            </div>
-                            <div style="font-size: 0.75rem; color: var(--text-secondary);">Teamwork</div>
-                        </div>
-                    ` : ''}
                     ${evaluation.professionalism ? `
                         <div style="text-align: center; padding: 0.75rem; background: var(--bg-secondary); border-radius: var(--radius-md);">
                             <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary-color); margin-bottom: 0.25rem;">
                                 ${evaluation.professionalism}
                             </div>
                             <div style="font-size: 0.75rem; color: var(--text-secondary);">Professionalism</div>
+                        </div>
+                    ` : ''}
+                    ${evaluation.workEthic ? `
+                        <div style="text-align: center; padding: 0.75rem; background: var(--bg-secondary); border-radius: var(--radius-md);">
+                            <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary-color); margin-bottom: 0.25rem;">
+                                ${evaluation.workEthic}
+                            </div>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary);">Work Ethic</div>
                         </div>
                     ` : ''}
                 </div>
@@ -315,9 +336,9 @@ function getRatingStars(rating) {
     let stars = '';
     for (let i = 1; i <= 5; i++) {
         if (i <= rating) {
-            stars += '<i class="fas fa-star"></i>';
+            stars += '<i class="fas fa-star" style="color: #F59E0B;"></i>';
         } else {
-            stars += '<i class="fas fa-star empty"></i>';
+            stars += '<i class="fas fa-star" style="color: #E5E7EB;"></i>';
         }
     }
     return stars;
@@ -325,13 +346,13 @@ function getRatingStars(rating) {
 
 function getPerformanceBadge(rating) {
     if (rating >= 4.5) {
-        return '<span class="evaluation-badge excellent"><i class="fas fa-trophy"></i> Excellent</span>';
+        return '<span style="background: #D1FAE5; color: #065F46; padding: 0.25rem 0.75rem; border-radius: 999px; font-size: 0.75rem; font-weight: 600;"><i class="fas fa-trophy"></i> Excellent</span>';
     } else if (rating >= 3.5) {
-        return '<span class="evaluation-badge good"><i class="fas fa-thumbs-up"></i> Good</span>';
+        return '<span style="background: #DBEAFE; color: #1E40AF; padding: 0.25rem 0.75rem; border-radius: 999px; font-size: 0.75rem; font-weight: 600;"><i class="fas fa-thumbs-up"></i> Good</span>';
     } else if (rating >= 2.5) {
-        return '<span class="evaluation-badge average"><i class="fas fa-minus-circle"></i> Average</span>';
+        return '<span style="background: #FEF3C7; color: #92400E; padding: 0.25rem 0.75rem; border-radius: 999px; font-size: 0.75rem; font-weight: 600;"><i class="fas fa-minus-circle"></i> Average</span>';
     } else {
-        return '<span class="evaluation-badge poor"><i class="fas fa-arrow-down"></i> Needs Improvement</span>';
+        return '<span style="background: #FEE2E2; color: #991B1B; padding: 0.25rem 0.75rem; border-radius: 999px; font-size: 0.75rem; font-weight: 600;"><i class="fas fa-arrow-down"></i> Needs Improvement</span>';
     }
 }
 
@@ -342,6 +363,8 @@ function viewEvaluationDetails(evaluationId) {
     
     const isCompany = evaluation.evaluatorType === 'COMPANY';
     const rating = evaluation.overallRating || 0;
+    const evaluator = evaluation.evaluator || {};
+    const internship = evaluation.internship || {};
     
     document.getElementById('evaluationDetails').innerHTML = `
         <div style="text-align: center; padding: 2rem; background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%); color: white; border-radius: var(--radius-md); margin-bottom: 1.5rem;">
@@ -358,16 +381,16 @@ function viewEvaluationDetails(evaluationId) {
                 <div style="display: grid; gap: 0.75rem;">
                     <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--border-color);">
                         <strong>Evaluated By:</strong>
-                        <span>${isCompany ? evaluation.company?.name || 'Company' : 'Academic Supervisor'}</span>
+                        <span>${evaluator.name || (isCompany ? 'Company' : 'Academic Supervisor')}</span>
                     </div>
                     <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--border-color);">
                         <strong>Date:</strong>
-                        <span>${formatDate(evaluation.evaluationDate)}</span>
+                        <span>${formatDate(evaluation.createdAt)}</span>
                     </div>
-                    ${evaluation.internship ? `
+                    ${internship.title ? `
                         <div style="display: flex; justify-content: space-between; padding: 0.5rem 0;">
                             <strong>Internship:</strong>
-                            <span>${evaluation.internship.title}</span>
+                            <span>${internship.title}</span>
                         </div>
                     ` : ''}
                 </div>
@@ -400,17 +423,6 @@ function viewEvaluationDetails(evaluationId) {
                             </div>
                         </div>
                     ` : ''}
-                    ${evaluation.teamwork ? `
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <span>Teamwork</span>
-                            <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                <div class="rating-stars" style="font-size: 1rem;">
-                                    ${getRatingStars(evaluation.teamwork)}
-                                </div>
-                                <strong>${evaluation.teamwork}/5</strong>
-                            </div>
-                        </div>
-                    ` : ''}
                     ${evaluation.professionalism ? `
                         <div style="display: flex; justify-content: space-between; align-items: center;">
                             <span>Professionalism</span>
@@ -419,6 +431,17 @@ function viewEvaluationDetails(evaluationId) {
                                     ${getRatingStars(evaluation.professionalism)}
                                 </div>
                                 <strong>${evaluation.professionalism}/5</strong>
+                            </div>
+                        </div>
+                    ` : ''}
+                    ${evaluation.workEthic ? `
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span>Work Ethic</span>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <div class="rating-stars" style="font-size: 1rem;">
+                                    ${getRatingStars(evaluation.workEthic)}
+                                </div>
+                                <strong>${evaluation.workEthic}/5</strong>
                             </div>
                         </div>
                     ` : ''}

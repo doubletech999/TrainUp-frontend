@@ -23,9 +23,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Load dashboard data
     await loadDashboardData();
     
-    // Start notification checks
-    checkNotifications();
-    setInterval(checkNotifications, 60000); // Check every minute
+    // ❌ DISABLED: Notifications (backend endpoints not ready)
+    // checkNotifications();
+    // setInterval(checkNotifications, 60000);
 });
 
 /**
@@ -120,29 +120,62 @@ function checkProfileCompletion(userData) {
  * Load dashboard data
  */
 async function loadDashboardData() {
+    console.log('🔍 Loading dashboard data...');
+    console.log('Token exists:', !!localStorage.getItem('token'));
+    
     try {
         // Load all data in parallel
+        console.log('📡 Fetching applications...');
         const [applicationsResponse, internshipsResponse] = await Promise.all([
             getMyApplications(),
             getAvailableInternships()
         ]);
 
+        console.log('Applications response:', applicationsResponse);
+        console.log('Internships response:', internshipsResponse);
+
         // Update stats
-        if (applicationsResponse.success) {
+        if (applicationsResponse && applicationsResponse.success) {
             const applications = applicationsResponse.data || [];
+            console.log('✅ Applications loaded:', applications.length);
             updateApplicationStats(applications);
             displayRecentApplications(applications.slice(0, 3));
+        } else {
+            console.warn('⚠️ Applications response not successful');
         }
 
-        if (internshipsResponse.success) {
+        if (internshipsResponse && internshipsResponse.success) {
             const internships = internshipsResponse.data || [];
-            document.getElementById('availableInternships').textContent = internships.length;
-            displayRecommendedInternships(internships.slice(0, 3));
+            console.log('✅ Internships loaded:', internships.length);
+            // ✅ Filter only ACTIVE internships on frontend
+            const activeInternships = internships.filter(i => i.status === 'ACTIVE');
+            document.getElementById('availableInternships').textContent = activeInternships.length;
+            displayRecommendedInternships(activeInternships.slice(0, 3));
+        } else {
+            console.warn('⚠️ Internships response not successful');
         }
 
     } catch (error) {
-        console.error('Error loading dashboard data:', error);
-        showAlert('Failed to load dashboard data. Please refresh the page.', 'error');
+        console.error('❌ Error loading dashboard data:', error);
+        console.error('Error details:', {
+            message: error.message,
+            stack: error.stack
+        });
+        
+        // Show more helpful error message
+        let errorMessage = 'Failed to load dashboard data. ';
+        if (error.message.includes('Failed to fetch')) {
+            errorMessage += 'Backend server may not be running. Please check if it\'s running on http://localhost:8080';
+        } else if (error.message.includes('401')) {
+            errorMessage += 'Your session has expired. Please login again.';
+            setTimeout(() => {
+                logout();
+            }, 2000);
+        } else {
+            errorMessage += 'Please refresh the page or contact support.';
+        }
+        
+        showAlert(errorMessage, 'error');
     }
 }
 
@@ -156,20 +189,23 @@ async function getMyApplications() {
 }
 
 /**
- * Get available internships
+ * Get available internships - ✅ FIXED ENDPOINT
  */
 async function getAvailableInternships() {
-    return await apiRequest('/internships/active', {
+    return await apiRequest('/internships', {  // Changed from /internships/active
         method: 'GET'
     });
 }
 
 /**
- * Update application stats
+ * Update application stats - ✅ FIXED STATUS MAPPING
  */
 function updateApplicationStats(applications) {
     const total = applications.length;
-    const pending = applications.filter(app => app.status === 'PENDING').length;
+    // Changed from PENDING to SUBMITTED and UNDER_REVIEW
+    const pending = applications.filter(app => 
+        app.status === 'SUBMITTED' || app.status === 'UNDER_REVIEW'
+    ).length;
     const accepted = applications.filter(app => app.status === 'ACCEPTED').length;
 
     document.getElementById('totalApplications').textContent = total;
@@ -219,9 +255,9 @@ function displayRecentApplications(applications) {
                 <div class="internship-meta">
                     <div class="meta-item">
                         <i class="fas fa-calendar"></i>
-                        <span>Applied ${formatDate(application.appliedAt)}</span>
+                        <span>Applied ${formatDate(application.appliedDate)}</span>
                     </div>
-                    ${application.status === 'PENDING' ? `
+                    ${application.status === 'SUBMITTED' || application.status === 'UNDER_REVIEW' ? `
                         <div class="meta-item">
                             <i class="fas fa-clock"></i>
                             <span>Under Review</span>
@@ -275,12 +311,6 @@ function displayRecommendedInternships(internships) {
                         <h3>${internship.title}</h3>
                         <p class="company-name">${company.name || 'Company'}</p>
                     </div>
-                    ${internship.featured ? `
-                        <span class="badge featured">
-                            <i class="fas fa-star"></i>
-                            Featured
-                        </span>
-                    ` : ''}
                 </div>
 
                 <p style="margin: 1rem 0; color: var(--text-secondary); line-height: 1.6;">
@@ -331,7 +361,6 @@ function displayRecommendedInternships(internships) {
  * Quick apply to internship
  */
 async function quickApply(internshipId) {
-    // Redirect to internship details page to apply
     window.location.href = `internship-details.html?id=${internshipId}&apply=true`;
 }
 
@@ -340,8 +369,9 @@ async function quickApply(internshipId) {
  */
 function formatStatus(status) {
     const statusMap = {
-        'PENDING': 'Pending',
+        'SUBMITTED': 'Submitted',
         'UNDER_REVIEW': 'Under Review',
+        'SHORTLISTED': 'Shortlisted',
         'ACCEPTED': 'Accepted',
         'REJECTED': 'Rejected',
         'WITHDRAWN': 'Withdrawn'
@@ -350,62 +380,19 @@ function formatStatus(status) {
 }
 
 /**
- * Check for new notifications
+ * Check for new notifications - ❌ DISABLED (No backend support yet)
  */
 async function checkNotifications() {
-    try {
-        const response = await apiRequest('/notifications/unread-count', {
-            method: 'GET'
-        });
-
-        if (response.success && response.data) {
-            const count = response.data.count || 0;
-            updateNotificationBadge(count);
-
-            // If there are new notifications, fetch recent ones for preview
-            if (count > 0) {
-                await fetchRecentNotifications();
-            }
-        } else {
-            updateNotificationBadge(0);
-        }
-    } catch (error) {
-        // Silent fail for notifications check
-        console.log('Could not check notifications');
-    }
-}
-
-/**
- * Fetch recent notifications for preview
- */
-async function fetchRecentNotifications() {
-    try {
-        const response = await apiRequest('/notifications/recent?limit=5', {
-            method: 'GET'
-        });
-
-        if (response.success && response.data && response.data.length > 0) {
-            showNotificationPreview(response.data);
-        }
-    } catch (error) {
-        console.log('Could not fetch recent notifications');
-    }
-}
-
-/**
- * Show notification preview (optional - can be displayed in a dropdown)
- */
-function showNotificationPreview(notifications) {
-    // This function can be used to display notifications in a dropdown menu
-    // Implementation depends on your UI design
-    console.log('Recent notifications:', notifications);
+    // Temporarily disabled - backend notification endpoints not implemented
+    console.log('Notifications feature disabled - waiting for backend implementation');
+    updateNotificationBadge(0);
+    return;
 }
 
 /**
  * Update notification badge in UI
  */
 function updateNotificationBadge(count) {
-    // Update sidebar notification badge
     const notificationLink = document.querySelector('a[href="notifications.html"]');
 
     if (notificationLink) {
@@ -427,7 +414,6 @@ function updateNotificationBadge(count) {
                 border-radius: 999px;
                 min-width: 20px;
                 text-align: center;
-                animation: pulse 2s infinite;
             `;
             notificationLink.style.position = 'relative';
             notificationLink.appendChild(badge);
@@ -437,184 +423,15 @@ function updateNotificationBadge(count) {
             if (count > 0) {
                 badge.textContent = count > 99 ? '99+' : count;
                 badge.style.display = 'block';
-                // Add pulse animation for new notifications
-                badge.style.animation = 'pulse 2s infinite';
             } else {
                 badge.style.display = 'none';
             }
         }
     }
 
-    // Update header notification icon if exists
-    const headerNotificationIcon = document.querySelector('.header-notifications');
-    if (headerNotificationIcon) {
-        updateHeaderNotificationBadge(headerNotificationIcon, count);
-    }
-
-    // Update page title with notification count
     if (count > 0) {
         document.title = `(${count}) Dashboard - TrainUp`;
     } else {
         document.title = 'Dashboard - TrainUp';
     }
 }
-
-/**
- * Update header notification badge
- */
-function updateHeaderNotificationBadge(headerElement, count) {
-    let headerBadge = headerElement.querySelector('.notification-count');
-
-    if (!headerBadge && count > 0) {
-        headerBadge = document.createElement('span');
-        headerBadge.className = 'notification-count';
-        headerBadge.style.cssText = `
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background: var(--danger-color);
-            color: white;
-            font-size: 0.65rem;
-            font-weight: 700;
-            padding: 0.125rem 0.375rem;
-            border-radius: 999px;
-            min-width: 18px;
-            text-align: center;
-        `;
-        headerElement.style.position = 'relative';
-        headerElement.appendChild(headerBadge);
-    }
-
-    if (headerBadge) {
-        if (count > 0) {
-            headerBadge.textContent = count > 99 ? '99+' : count;
-            headerBadge.style.display = 'block';
-        } else {
-            headerBadge.style.display = 'none';
-        }
-    }
-}
-
-/**
- * Mark notification as read
- */
-async function markNotificationAsRead(notificationId) {
-    try {
-        const response = await apiRequest(`/notifications/${notificationId}/read`, {
-            method: 'PUT'
-        });
-
-        if (response.success) {
-            // Refresh notification count
-            await checkNotifications();
-        }
-    } catch (error) {
-        console.error('Error marking notification as read:', error);
-    }
-}
-
-/**
- * Mark all notifications as read
- */
-async function markAllNotificationsAsRead() {
-    try {
-        const response = await apiRequest('/notifications/mark-all-read', {
-            method: 'PUT'
-        });
-
-        if (response.success) {
-            updateNotificationBadge(0);
-            showAlert('All notifications marked as read', 'success');
-        }
-    } catch (error) {
-        console.error('Error marking all notifications as read:', error);
-        showAlert('Failed to mark notifications as read', 'error');
-    }
-}
-
-/**
- * Display notification toast
- */
-function showNotificationToast(notification) {
-    // Create toast element
-    const toast = document.createElement('div');
-    toast.className = 'notification-toast';
-    toast.style.cssText = `
-        position: fixed;
-        top: 2rem;
-        right: 2rem;
-        background: white;
-        border-radius: 12px;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-        padding: 1rem 1.5rem;
-        min-width: 300px;
-        max-width: 400px;
-        z-index: 10000;
-        animation: slideInRight 0.3s ease-out;
-        border-left: 4px solid var(--primary-color);
-    `;
-
-    toast.innerHTML = `
-        <div style="display: flex; align-items: start; gap: 1rem;">
-            <i class="fas fa-bell" style="color: var(--primary-color); margin-top: 0.25rem;"></i>
-            <div style="flex: 1;">
-                <h4 style="margin: 0 0 0.5rem 0; font-size: 0.95rem; color: var(--text-primary);">
-                    ${notification.title || 'New Notification'}
-                </h4>
-                <p style="margin: 0; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">
-                    ${notification.message}
-                </p>
-            </div>
-            <button onclick="this.parentElement.parentElement.remove()"
-                    style="background: none; border: none; cursor: pointer; color: var(--text-secondary); font-size: 1.25rem; padding: 0;">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-    `;
-
-    document.body.appendChild(toast);
-
-    // Auto-remove after 5 seconds
-    setTimeout(() => {
-        toast.style.animation = 'slideOutRight 0.3s ease-out';
-        setTimeout(() => toast.remove(), 300);
-    }, 5000);
-}
-
-// Add CSS animations for notifications
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes pulse {
-        0%, 100% {
-            transform: translateY(-50%) scale(1);
-            opacity: 1;
-        }
-        50% {
-            transform: translateY(-50%) scale(1.1);
-            opacity: 0.8;
-        }
-    }
-
-    @keyframes slideInRight {
-        from {
-            transform: translateX(100%);
-            opacity: 0;
-        }
-        to {
-            transform: translateX(0);
-            opacity: 1;
-        }
-    }
-
-    @keyframes slideOutRight {
-        from {
-            transform: translateX(0);
-            opacity: 1;
-        }
-        to {
-            transform: translateX(100%);
-            opacity: 0;
-        }
-    }
-`;
-document.head.appendChild(style);

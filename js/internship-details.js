@@ -107,7 +107,7 @@ async function checkIfApplied(internshipId) {
         if (response.success) {
             const applications = response.data || [];
             alreadyApplied = applications.some(app => 
-                app.internship && app.internship.id === internshipId
+                app.internshipId === internshipId
             );
         }
     } catch (error) {
@@ -134,15 +134,7 @@ function displayInternship(internship) {
                 </div>
                 
                 <div style="flex: 1; min-width: 250px;">
-                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap;">
-                        <h1 style="color: white; margin: 0;">${internship.title}</h1>
-                        ${internship.featured ? `
-                            <span style="background: rgba(255,255,255,0.2); padding: 0.25rem 0.75rem; border-radius: var(--radius-full); font-size: 0.875rem;">
-                                <i class="fas fa-star"></i> Featured
-                            </span>
-                        ` : ''}
-                    </div>
-                    
+                    <h1 style="color: white; margin: 0 0 1rem 0;">${internship.title}</h1>
                     <h2 style="color: rgba(255,255,255,0.9); font-size: 1.5rem; font-weight: 500; margin-bottom: 1.5rem;">
                         ${company.name || 'Company'}
                     </h2>
@@ -155,10 +147,6 @@ function displayInternship(internship) {
                         <div style="display: flex; align-items: center; gap: 0.5rem;">
                             <i class="fas fa-clock"></i>
                             <span>${internship.duration} months</span>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 0.5rem;">
-                            <i class="fas fa-briefcase"></i>
-                            <span>${internship.type || 'Full-time'}</span>
                         </div>
                         <div style="display: flex; align-items: center; gap: 0.5rem;">
                             <i class="fas fa-users"></i>
@@ -178,7 +166,7 @@ function displayInternship(internship) {
                             <i class="fas fa-check-circle" style="font-size: 2rem; margin-bottom: 0.5rem;"></i>
                             <div>Already Applied</div>
                         </div>
-                        <a href="applications.html" class="btn btn-outline" style="border-color: white; color: white;">
+                        <a href="my-applications.html" class="btn btn-outline" style="border-color: white; color: white;">
                             View Application
                         </a>
                     ` : isExpired ? `
@@ -265,24 +253,6 @@ function displayInternship(internship) {
                     </div>
                 ` : ''}
 
-                <!-- Benefits -->
-                ${internship.benefits && internship.benefits.length > 0 ? `
-                    <div class="content-section">
-                        <h2 style="margin-bottom: 1rem;">
-                            <i class="fas fa-gift"></i>
-                            What We Offer
-                        </h2>
-                        <ul style="list-style: none; padding: 0; display: grid; gap: 0.75rem;">
-                            ${internship.benefits.map(benefit => `
-                                <li style="display: flex; align-items: start; padding: 1rem; background: #F0F9FF; border-radius: var(--radius-md); border-left: 4px solid var(--info-color);">
-                                    <i class="fas fa-star" style="color: var(--warning-color); margin-right: 1rem; margin-top: 0.25rem; flex-shrink: 0;"></i>
-                                    <span>${benefit}</span>
-                                </li>
-                            `).join('')}
-                        </ul>
-                    </div>
-                ` : ''}
-
                 <!-- Skills -->
                 ${internship.skills && internship.skills.length > 0 ? `
                     <div class="content-section">
@@ -292,7 +262,7 @@ function displayInternship(internship) {
                         </h2>
                         <div style="display: flex; flex-wrap: wrap; gap: 0.75rem;">
                             ${internship.skills.map(skill => `
-                                <span style="background: var(--primary-light); color: var(--primary-color); padding: 0.75rem 1.25rem; border-radius: var(--radius-full); font-weight: 500;">
+                                <span style="background: rgba(79, 70, 229, 0.1); color: var(--primary-color); padding: 0.75rem 1.25rem; border-radius: var(--radius-full); font-weight: 500;">
                                     ${skill}
                                 </span>
                             `).join('')}
@@ -321,12 +291,6 @@ function displayInternship(internship) {
                             <div style="display: flex; align-items: center; gap: 0.75rem;">
                                 <i class="fas fa-industry" style="width: 20px;"></i>
                                 <span>${company.industry}</span>
-                            </div>
-                        ` : ''}
-                        ${company.companySize ? `
-                            <div style="display: flex; align-items: center; gap: 0.75rem;">
-                                <i class="fas fa-users" style="width: 20px;"></i>
-                                <span>${company.companySize} employees</span>
                             </div>
                         ` : ''}
                         ${company.location ? `
@@ -359,10 +323,6 @@ function displayInternship(internship) {
                             <strong>${internship.duration} months</strong>
                         </div>
                         <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--border-color);">
-                            <span style="color: var(--text-secondary);">Type:</span>
-                            <strong>${internship.type || 'Full-time'}</strong>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--border-color);">
                             <span style="color: var(--text-secondary);">Positions:</span>
                             <strong>${internship.numberOfPositions}</strong>
                         </div>
@@ -370,9 +330,15 @@ function displayInternship(internship) {
                             <span style="color: var(--text-secondary);">Location:</span>
                             <strong>${internship.location}</strong>
                         </div>
+                        ${internship.isPaid ? `
+                            <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--border-color);">
+                                <span style="color: var(--text-secondary);">Stipend:</span>
+                                <strong style="color: var(--success-color);">${internship.stipend ? '$' + internship.stipend : 'Paid'}</strong>
+                            </div>
+                        ` : ''}
                         <div style="display: flex; justify-content: space-between; padding: 0.5rem 0;">
                             <span style="color: var(--text-secondary);">Posted:</span>
-                            <strong>${formatDate(internship.createdAt)}</strong>
+                            <strong>${formatDate(internship.postedDate)}</strong>
                         </div>
                     </div>
                 </div>
@@ -460,7 +426,7 @@ function closeApplyModal() {
 }
 
 /**
- * Submit application
+ * Submit application - ✅ FIXED ENDPOINT AND REQUEST BODY
  */
 async function submitApplication() {
     const coverLetter = document.getElementById('coverLetter').value.trim();
@@ -486,11 +452,13 @@ async function submitApplication() {
     try {
         showAlert('Submitting your application...', 'info');
 
-        const response = await apiRequest('/applications/apply', {
+        // ✅ FIXED: Correct endpoint and request body matching backend CreateApplicationRequest
+        const response = await apiRequest('/applications', {
             method: 'POST',
             body: JSON.stringify({
                 internshipId: currentInternship.id,
-                coverLetter: coverLetter
+                coverLetter: coverLetter,
+                cvUrl: profile.cvUrl  // Added cvUrl from profile
             })
         });
 
