@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verify Companies - TrainUp</title>
+    <title>Company Profile - TrainUp</title>
     
     <!-- CSS Files -->
     <link rel="stylesheet" href="../../css/style.css">
@@ -28,25 +28,21 @@
                     <i class="fas fa-home"></i>
                     <span>Dashboard</span>
                 </a>
-                <a href="companies.html" class="nav-item active">
-                    <i class="fas fa-building"></i>
-                    <span>Verify Companies</span>
-                </a>
                 <a href="internships.html" class="nav-item">
                     <i class="fas fa-briefcase"></i>
-                    <span>Review Internships</span>
+                    <span>My Internships</span>
                 </a>
-                <a href="students.html" class="nav-item">
-                    <i class="fas fa-user-graduate"></i>
-                    <span>Monitor Students</span>
+                <a href="applications.html" class="nav-item">
+                    <i class="fas fa-users"></i>
+                    <span>Applications</span>
                 </a>
-                <a href="reports.html" class="nav-item">
-                    <i class="fas fa-chart-bar"></i>
-                    <span>Reports</span>
+                <a href="create-internship.html" class="nav-item">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>Post Internship</span>
                 </a>
-                <a href="profile.html" class="nav-item">
-                    <i class="fas fa-user"></i>
-                    <span>Profile</span>
+                <a href="profile.html" class="nav-item active">
+                    <i class="fas fa-building"></i>
+                    <span>Company Profile</span>
                 </a>
                 <a href="#" class="nav-item" onclick="logout()">
                     <i class="fas fa-sign-out-alt"></i>
@@ -56,10 +52,10 @@
             
             <div class="sidebar-footer">
                 <div class="user-profile">
-                    <div class="user-avatar" id="userAvatar">S</div>
+                    <div class="user-avatar" id="userAvatar">C</div>
                     <div class="user-info">
-                        <h4 id="supervisorName">Supervisor</h4>
-                        <p id="userEmail">supervisor@example.com</p>
+                        <h4 id="companyName">Company</h4>
+                        <p id="userEmail">company@example.com</p>
                     </div>
                 </div>
             </div>
@@ -70,16 +66,20 @@
             <div class="page-header">
                 <div>
                     <h1>
-                        <span>Verify Companies</span>
+                        <span>Company Profile</span>
                         <i class="fas fa-building"></i>
                     </h1>
-                    <p>Review and verify company registrations for legitimacy</p>
+                    <p>View and manage your company information and settings</p>
                 </div>
                 <div class="notifications-header">
                     <div class="notification-icon-wrapper" onclick="goToNotificationsPage()">
                         <i class="fas fa-bell"></i>
                         <span class="notification-badge hidden" id="notificationBadge">0</span>
                     </div>
+                    <button class="btn btn-primary" onclick="editCompanyProfile()">
+                        <i class="fas fa-edit"></i>
+                        Edit Profile
+                    </button>
                 </div>
             </div>
 
@@ -105,51 +105,15 @@
             <!-- Alert Messages -->
             <div id="alertMessage" class="alert" style="display: none;"></div>
 
-            <!-- Companies List -->
-            <div class="content-section">
-                <div class="section-header">
-                    <h2>Pending Companies (<span id="companiesCount">0</span>)</h2>
-                </div>
-                
-                <div id="companiesList">
-                    <!-- Loading state -->
-                    <div class="empty-state">
-                        <i class="fas fa-spinner fa-spin"></i>
-                        <p>Loading companies...</p>
-                    </div>
+            <!-- Profile Content -->
+            <div id="profileContent" style="display: grid; gap: 2rem;">
+                <!-- Loading state -->
+                <div class="empty-state">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Loading profile...</p>
                 </div>
             </div>
         </main>
-    </div>
-
-    <!-- Company Details Modal -->
-    <div class="modal" id="companyModal">
-        <div class="modal-content" style="max-width: 800px;">
-            <div class="modal-header">
-                <h2>Company Details</h2>
-                <button class="modal-close" onclick="closeCompanyModal()">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-
-            <div class="modal-body">
-                <div id="companyDetails"></div>
-            </div>
-
-            <div class="modal-footer">
-                <button class="btn btn-outline" onclick="closeCompanyModal()">
-                    Close
-                </button>
-                <button class="btn btn-outline" id="rejectBtn" style="border-color: var(--danger-color); color: var(--danger-color);">
-                    <i class="fas fa-times"></i>
-                    Reject
-                </button>
-                <button class="btn btn-primary" id="approveBtn">
-                    <i class="fas fa-check"></i>
-                    Approve & Verify
-                </button>
-            </div>
-        </div>
     </div>
 
     <!-- JavaScript Files -->
@@ -158,6 +122,7 @@
     <script src="../../js/api.js"></script>
     <script src="../../js/notifications-handler.js"></script>
     <script src="../../js/global-actions.js"></script>
-    <script src="../../js/supervisor-companies.js"></script>
+    <script src="../../js/company-profile.js"></script>
 </body>
 </html>
+

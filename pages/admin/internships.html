@@ -27,19 +27,23 @@
                 </a>
                 <a href="users.html" class="nav-item">
                     <i class="fas fa-users"></i>
-                    <span>Users</span>
+                    <span>User Management</span>
                 </a>
                 <a href="internships.html" class="nav-item active">
                     <i class="fas fa-briefcase"></i>
-                    <span>Internships</span>
+                    <span>Internships Review</span>
+                </a>
+                <a href="companies.html" class="nav-item">
+                    <i class="fas fa-building"></i>
+                    <span>Companies</span>
                 </a>
                 <a href="reports.html" class="nav-item">
                     <i class="fas fa-chart-bar"></i>
-                    <span>Reports</span>
+                    <span>Reports & Analytics</span>
                 </a>
                 <a href="settings.html" class="nav-item">
                     <i class="fas fa-cog"></i>
-                    <span>Settings</span>
+                    <span>System Settings</span>
                 </a>
                 <a href="#" class="nav-item" onclick="logout()">
                     <i class="fas fa-sign-out-alt"></i>
@@ -62,14 +66,40 @@
         <main class="main-content">
             <div class="page-header">
                 <div>
-                    <h1>Manage Internships</h1>
+                    <h1>
+                        <span>Manage Internships</span>
+                        <i class="fas fa-briefcase"></i>
+                    </h1>
                     <p>Review and manage all internship postings</p>
                 </div>
-                <div>
+                <div class="notifications-header">
+                    <div class="notification-icon-wrapper" onclick="goToNotificationsPage()">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge hidden" id="notificationBadge">0</span>
+                    </div>
                     <button class="btn btn-outline" onclick="filterInternships('all')">
                         <i class="fas fa-list"></i>
                         All Internships
                     </button>
+                </div>
+            </div>
+
+            <!-- Notifications Dropdown -->
+            <div class="notifications-dropdown" id="notificationsDropdown">
+                <div class="notifications-dropdown-header">
+                    <h3>Notifications</h3>
+                    <button class="mark-all-read" onclick="markAllNotificationsAsRead()">
+                        Mark all as read
+                    </button>
+                </div>
+                <div class="notifications-list" id="notificationsList">
+                    <div class="notifications-empty">
+                        <i class="fas fa-bell-slash"></i>
+                        <p>No notifications</p>
+                    </div>
+                </div>
+                <div class="notifications-dropdown-footer">
+                    <a href="notifications.html">View all notifications</a>
                 </div>
             </div>
 
@@ -194,6 +224,7 @@
     <script src="../../js/auth.js"></script>
     <script src="../../js/api.js"></script>
     <script src="../../js/notifications-handler.js"></script>
+    <script src="../../js/global-actions.js"></script>
     <script src="../../js/admin-internships.js"></script>
 </body>
 </html>

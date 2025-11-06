@@ -44,10 +44,6 @@
                     <i class="fas fa-cog"></i>
                     <span>System Settings</span>
                 </a>
-                <a href="notifications.html" class="nav-item">
-                    <i class="fas fa-bell"></i>
-                    <span>Notifications</span>
-                </a>
                 <a href="#" class="nav-item" onclick="logout()">
                     <i class="fas fa-sign-out-alt"></i>
                     <span>Logout</span>
@@ -67,20 +63,48 @@
         <main class="main-content">
             <div class="page-header">
                 <div>
-                    <h1>Reports & Analytics 📊</h1>
+                    <h1>
+                        <span>Reports & Analytics</span>
+                        <i class="fas fa-chart-bar"></i>
+                    </h1>
                     <p>System-wide statistics and insights</p>
                 </div>
-                <div style="display: flex; gap: 0.75rem;">
-                    <select id="dateRange" class="form-control" onchange="updateReports()">
-                        <option value="7">Last 7 Days</option>
-                        <option value="30" selected>Last 30 Days</option>
-                        <option value="90">Last 90 Days</option>
-                        <option value="365">Last Year</option>
-                    </select>
-                    <button class="btn btn-primary" onclick="exportReport()">
-                        <i class="fas fa-download"></i>
-                        Export PDF
+                <div class="notifications-header">
+                    <div class="notification-icon-wrapper" onclick="goToNotificationsPage()">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge hidden" id="notificationBadge">0</span>
+                    </div>
+                    <div style="display: flex; gap: 0.75rem;">
+                        <select id="dateRange" style="padding: 0.75rem 1rem; border: 2px solid var(--border-color); border-radius: var(--radius-lg); background: var(--bg-primary); font-family: inherit; cursor: pointer; transition: var(--transition);" onchange="updateReports()">
+                            <option value="7">Last 7 Days</option>
+                            <option value="30" selected>Last 30 Days</option>
+                            <option value="90">Last 90 Days</option>
+                            <option value="365">Last Year</option>
+                        </select>
+                        <button class="btn btn-primary" onclick="exportReport()">
+                            <i class="fas fa-download"></i>
+                            Export PDF
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notifications Dropdown -->
+            <div class="notifications-dropdown" id="notificationsDropdown">
+                <div class="notifications-dropdown-header">
+                    <h3>Notifications</h3>
+                    <button class="mark-all-read" onclick="markAllNotificationsAsRead()">
+                        Mark all as read
                     </button>
+                </div>
+                <div class="notifications-list" id="notificationsList">
+                    <div class="notifications-empty">
+                        <i class="fas fa-bell-slash"></i>
+                        <p>No notifications</p>
+                    </div>
+                </div>
+                <div class="notifications-dropdown-footer">
+                    <a href="notifications.html">View all notifications</a>
                 </div>
             </div>
 
@@ -173,6 +197,7 @@
     <script src="../../js/auth.js"></script>
     <script src="../../js/api.js"></script>
     <script src="../../js/notifications-handler.js"></script>
+    <script src="../../js/global-actions.js"></script>
     <script src="../../js/admin-reports.js"></script>
 </body>
 </html>

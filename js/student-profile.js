@@ -53,25 +53,25 @@ function displayProfile() {
     const initials = getInitials(profile.firstName, profile.lastName);
 
     document.getElementById('profileContent').innerHTML = `
-        <div style="background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%); color: white; padding: 3rem; border-radius: var(--radius-lg); margin-bottom: 2rem; text-align: center;">
-            <div style="width: 120px; height: 120px; background: white; color: var(--primary-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3rem; font-weight: 700; margin: 0 auto 1rem;">
-                ${initials}
-            </div>
-            <h1 style="color: white; margin-bottom: 0.5rem;">${fullName}</h1>
-            <p style="opacity: 0.9; margin-bottom: 0.5rem;">${profile.major || 'Student'} • ${profile.university || 'University'}</p>
-            <p style="opacity: 0.8; font-size: 0.875rem;">
-                <i class="fas fa-id-card"></i> ${profile.studentId || 'N/A'}
-            </p>
-            <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 1.5rem; flex-wrap: wrap;">
-                <a href="edit-profile.html" class="btn" style="background: white; color: var(--primary-color);">
-                    <i class="fas fa-edit"></i>
-                    Edit Profile
-                </a>
+        <div style="background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%); color: white; padding: 3rem 2rem; border-radius: var(--radius-xl); margin-bottom: 2rem; text-align: center; box-shadow: var(--shadow-elegant); position: relative; overflow: hidden;">
+            <div style="position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; background: rgba(255, 255, 255, 0.1); border-radius: 50%;"></div>
+            <div style="position: absolute; bottom: -30px; left: -30px; width: 150px; height: 150px; background: rgba(255, 255, 255, 0.05); border-radius: 50%;"></div>
+            <div style="position: relative; z-index: 1;">
+                <div style="width: 120px; height: 120px; background: white; color: var(--primary-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3rem; font-weight: 700; margin: 0 auto 1.5rem; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);">
+                    ${initials}
+                </div>
+                <h1 style="color: #FFFFFF; margin-bottom: 0.75rem; font-size: 2.25rem; font-weight: 800; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);">${fullName}</h1>
+                <p style="color: #FFFFFF; margin-bottom: 0.75rem; font-size: 1.125rem; font-weight: 500; opacity: 0.95;">${profile.major || 'Student'} • ${profile.university || 'University'}</p>
+                <p style="color: #FFFFFF; font-size: 0.9375rem; opacity: 0.85; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                    <i class="fas fa-id-card"></i> ${profile.studentId || 'N/A'}
+                </p>
                 ${profile.cvUrl ? `
-                    <a href="${profile.cvUrl}" target="_blank" class="btn btn-outline" style="border-color: white; color: white;">
-                        <i class="fas fa-file-pdf"></i>
-                        View CV
-                    </a>
+                    <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 2rem; flex-wrap: wrap;">
+                        <a href="${profile.cvUrl}" target="_blank" class="btn" style="background: rgba(255, 255, 255, 0.2); color: white; border: 2px solid rgba(255, 255, 255, 0.3); backdrop-filter: blur(10px);">
+                            <i class="fas fa-file-pdf"></i>
+                            View CV
+                        </a>
+                    </div>
                 ` : ''}
             </div>
         </div>

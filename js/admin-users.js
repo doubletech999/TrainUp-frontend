@@ -236,7 +236,13 @@ async function viewUser(userId) {
  * Edit user
  */
 function editUser(userId) {
-    showAlert('Edit functionality coming soon!', 'info');
+    // Open edit modal or redirect to edit page
+    const user = allUsers.find(u => u.id === userId);
+    if (!user) return;
+    
+    viewUser(userId);
+    // TODO: Add edit functionality in modal or redirect to edit page
+    showAlert('Edit user functionality will be available soon. Currently, you can view user details.', 'info');
 }
 
 /**
@@ -299,14 +305,53 @@ function closeUserModal() {
  * Export users
  */
 function exportUsers() {
-    showAlert('Export functionality coming soon!', 'info');
+    try {
+        // Generate CSV data
+        const headers = ['ID', 'Name', 'Email', 'User Type', 'Status', 'Registered Date'];
+        const rows = allUsers.map(user => {
+            const profile = user.profile || {};
+            const fullName = `${profile.firstName || ''} ${profile.lastName || ''}`.trim() || user.email;
+            return [
+                user.id || '',
+                fullName,
+                user.email || '',
+                user.userType || '',
+                user.status || 'ACTIVE',
+                user.createdAt ? new Date(user.createdAt).toLocaleDateString() : ''
+            ];
+        });
+
+        const csvContent = [
+            headers.join(','),
+            ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
+        ].join('\n');
+
+        // Download CSV
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', `users_export_${new Date().toISOString().split('T')[0]}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        showAlert('Users exported successfully!', 'success');
+    } catch (error) {
+        console.error('Error exporting users:', error);
+        showAlert('Failed to export users', 'error');
+    }
 }
 
 /**
  * Show add user modal
  */
 function showAddUserModal() {
-    showAlert('Add user functionality coming soon!', 'info');
+    // Redirect to registration page or show modal
+    if (confirm('Do you want to create a new user? You will be redirected to the registration page.')) {
+        window.location.href = '../../register.html';
+    }
 }
 
 /**

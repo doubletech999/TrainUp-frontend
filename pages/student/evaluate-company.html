@@ -124,7 +124,7 @@
                 </a>
                 <a href="internships.html" class="nav-item">
                     <i class="fas fa-briefcase"></i>
-                    <span>Internships</span>
+                    <span>Browse Internships</span>
                 </a>
                 <a href="my-applications.html" class="nav-item">
                     <i class="fas fa-file-alt"></i>
@@ -132,11 +132,7 @@
                 </a>
                 <a href="evaluations.html" class="nav-item active">
                     <i class="fas fa-star"></i>
-                    <span>Evaluations</span>
-                </a>
-                <a href="notifications.html" class="nav-item">
-                    <i class="fas fa-bell"></i>
-                    <span>Notifications</span>
+                    <span>My Evaluations</span>
                 </a>
                 <a href="profile.html" class="nav-item">
                     <i class="fas fa-user"></i>
@@ -171,8 +167,36 @@
 
             <div class="page-header">
                 <div>
-                    <h1>Evaluate Company Experience</h1>
+                    <h1>
+                        <span>Evaluate Company Experience</span>
+                        <i class="fas fa-star"></i>
+                    </h1>
                     <p>Share your internship experience to help other students</p>
+                </div>
+                <div class="notifications-header">
+                    <div class="notification-icon-wrapper" onclick="goToNotificationsPage()">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge hidden" id="notificationBadge">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notifications Dropdown -->
+            <div class="notifications-dropdown" id="notificationsDropdown">
+                <div class="notifications-dropdown-header">
+                    <h3>Notifications</h3>
+                    <button class="mark-all-read" onclick="markAllNotificationsAsRead()">
+                        Mark all as read
+                    </button>
+                </div>
+                <div class="notifications-list" id="notificationsList">
+                    <div class="notifications-empty">
+                        <i class="fas fa-bell-slash"></i>
+                        <p>No notifications</p>
+                    </div>
+                </div>
+                <div class="notifications-dropdown-footer">
+                    <a href="notifications.html">View all notifications</a>
                 </div>
             </div>
 

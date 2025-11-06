@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports & Analytics - Supervisor - TrainUp</title>
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/dashboard.css">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Chart.js for charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <i class="fas fa-graduation-cap"></i>
+                    TrainUp
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="companies.html" class="nav-item">
+                    <i class="fas fa-building"></i>
+                    <span>Verify Companies</span>
+                </a>
+                <a href="internships.html" class="nav-item">
+                    <i class="fas fa-briefcase"></i>
+                    <span>Review Internships</span>
+                </a>
+                <a href="students.html" class="nav-item">
+                    <i class="fas fa-user-graduate"></i>
+                    <span>Monitor Students</span>
+                </a>
+                <a href="reports.html" class="nav-item active">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Reports</span>
+                </a>
+                <a href="profile.html" class="nav-item">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+                <a href="#" class="nav-item" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-avatar" id="userAvatar">S</div>
+                    <div class="user-info">
+                        <h4 id="supervisorName">Supervisor</h4>
+                        <p id="userEmail">supervisor@example.com</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="page-header">
+                <div>
+                    <h1>
+                        <span>Reports & Analytics</span>
+                        <i class="fas fa-chart-bar"></i>
+                    </h1>
+                    <p>Supervision statistics and student performance insights</p>
+                </div>
+                <div class="notifications-header">
+                    <div class="notification-icon-wrapper" onclick="goToNotificationsPage()">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge hidden" id="notificationBadge">0</span>
+                    </div>
+                    <div style="display: flex; gap: 0.75rem; align-items: center;">
+                        <select id="dateRange" style="padding: 0.75rem 1rem; border: 2px solid var(--border-color); border-radius: var(--radius-lg); background: var(--bg-primary); font-family: inherit; cursor: pointer; transition: var(--transition);" onchange="updateReports()">
+                            <option value="7">Last 7 Days</option>
+                            <option value="30" selected>Last 30 Days</option>
+                            <option value="90">Last 90 Days</option>
+                            <option value="365">Last Year</option>
+                        </select>
+                        <button class="btn btn-primary" onclick="exportReport()">
+                            <i class="fas fa-download"></i>
+                            Export PDF
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notifications Dropdown -->
+            <div class="notifications-dropdown" id="notificationsDropdown">
+                <div class="notifications-dropdown-header">
+                    <h3>Notifications</h3>
+                    <button class="mark-all-read" onclick="markAllNotificationsAsRead()">
+                        Mark all as read
+                    </button>
+                </div>
+                <div class="notifications-list" id="notificationsList">
+                    <div class="notifications-empty">
+                        <i class="fas fa-bell-slash"></i>
+                        <p>No notifications</p>
+                    </div>
+                </div>
+                <div class="notifications-dropdown-footer">
+                    <a href="notifications.html">View all notifications</a>
+                </div>
+            </div>
+
+            <!-- Alert Messages -->
+            <div id="alertMessage" class="alert" style="display: none;"></div>
+
+            <!-- Key Metrics -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <div>
+                            <div class="stat-value" id="totalStudents">0</div>
+                            <div class="stat-label">Total Students</div>
+                            <div class="stat-change positive" id="studentsChange">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>0%</span>
+                            </div>
+                        </div>
+                        <div class="stat-card-icon primary">
+                            <i class="fas fa-user-graduate"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <div>
+                            <div class="stat-value" id="activeInternships">0</div>
+                            <div class="stat-label">Active Internships</div>
+                            <div class="stat-change positive" id="internshipsChange">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>0%</span>
+                            </div>
+                        </div>
+                        <div class="stat-card-icon success">
+                            <i class="fas fa-briefcase"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <div>
+                            <div class="stat-value" id="completedInternships">0</div>
+                            <div class="stat-label">Completed</div>
+                            <div class="stat-change positive" id="completedChange">
+                                <i class="fas fa-check-circle"></i>
+                                <span>0%</span>
+                            </div>
+                        </div>
+                        <div class="stat-card-icon info">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <div>
+                            <div class="stat-value" id="averageRating">0.0</div>
+                            <div class="stat-label">Average Rating</div>
+                            <div class="stat-change positive" id="ratingChange">
+                                <i class="fas fa-star"></i>
+                                <span>Excellent</span>
+                            </div>
+                        </div>
+                        <div class="stat-card-icon warning">
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row 1 -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 1.5rem; margin-top: 2rem;">
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2>
+                            <i class="fas fa-chart-line" style="color: var(--primary-color);"></i>
+                            Student Progress
+                        </h2>
+                    </div>
+                    <canvas id="studentsChart" style="max-height: 300px;"></canvas>
+                </div>
+                
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2>
+                            <i class="fas fa-pie-chart" style="color: var(--primary-color);"></i>
+                            Internship Status
+                        </h2>
+                    </div>
+                    <canvas id="internshipsChart" style="max-height: 300px;"></canvas>
+                </div>
+            </div>
+
+            <!-- Charts Row 2 -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 1.5rem; margin-top: 1.5rem;">
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2>
+                            <i class="fas fa-building" style="color: var(--primary-color);"></i>
+                            Companies Distribution
+                        </h2>
+                    </div>
+                    <canvas id="companiesChart" style="max-height: 300px;"></canvas>
+                </div>
+                
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2>
+                            <i class="fas fa-calendar-alt" style="color: var(--primary-color);"></i>
+                            Monthly Trends
+                        </h2>
+                    </div>
+                    <canvas id="trendsChart" style="max-height: 300px;"></canvas>
+                </div>
+            </div>
+
+            <!-- Top Performers -->
+            <div class="content-section" style="margin-top: 2rem;">
+                <div class="section-header">
+                    <h2>
+                        <i class="fas fa-trophy" style="color: var(--primary-color);"></i>
+                        Top Performing Students
+                    </h2>
+                </div>
+                <div id="topStudents">
+                    <div class="empty-state">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Loading data...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Company Performance -->
+            <div class="content-section" style="margin-top: 2rem;">
+                <div class="section-header">
+                    <h2>
+                        <i class="fas fa-building" style="color: var(--primary-color);"></i>
+                        Company Performance
+                    </h2>
+                </div>
+                <div id="companyPerformance">
+                    <div class="empty-state">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Loading data...</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- JavaScript Files -->
+    <script src="../../js/config.js"></script>
+    <script src="../../js/auth.js"></script>
+    <script src="../../js/api.js"></script>
+    <script src="../../js/notifications-handler.js"></script>
+    <script src="../../js/global-actions.js"></script>
+    <script>
+        // Initialize charts
+        let studentsChart, internshipsChart, companiesChart, trendsChart;
+
+        function updateReports() {
+            const dateRange = document.getElementById('dateRange').value;
+            // TODO: Fetch data based on date range
+            loadReports();
+        }
+
+        function loadReports() {
+            // Sample data - replace with actual API calls
+            const stats = {
+                totalStudents: 125,
+                activeInternships: 89,
+                completedInternships: 156,
+                averageRating: 4.7
+            };
+
+            document.getElementById('totalStudents').textContent = stats.totalStudents;
+            document.getElementById('activeInternships').textContent = stats.activeInternships;
+            document.getElementById('completedInternships').textContent = stats.completedInternships;
+            document.getElementById('averageRating').textContent = stats.averageRating.toFixed(1);
+
+            // Initialize charts
+            initializeCharts();
+        }
+
+        function initializeCharts() {
+            // Students Progress Chart
+            const studentsCtx = document.getElementById('studentsChart');
+            if (studentsCtx) {
+                studentsChart = new Chart(studentsCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                        datasets: [{
+                            label: 'Active Students',
+                            data: [65, 75, 85, 95, 105, 125],
+                            borderColor: 'rgb(30, 58, 138)',
+                            backgroundColor: 'rgba(30, 58, 138, 0.1)',
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Internships Status Chart
+            const internshipsCtx = document.getElementById('internshipsChart');
+            if (internshipsCtx) {
+                internshipsChart = new Chart(internshipsCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Active', 'Completed', 'Pending'],
+                        datasets: [{
+                            data: [89, 156, 23],
+                            backgroundColor: [
+                                'rgba(30, 58, 138, 0.8)',
+                                'rgba(5, 150, 105, 0.8)',
+                                'rgba(245, 158, 11, 0.8)'
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false
+                    }
+                });
+            }
+
+            // Companies Chart
+            const companiesCtx = document.getElementById('companiesChart');
+            if (companiesCtx) {
+                companiesChart = new Chart(companiesCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Tech', 'Finance', 'Healthcare', 'Education', 'Manufacturing'],
+                        datasets: [{
+                            label: 'Companies',
+                            data: [45, 32, 28, 18, 12],
+                            backgroundColor: 'rgba(30, 58, 138, 0.8)'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Trends Chart
+            const trendsCtx = document.getElementById('trendsChart');
+            if (trendsCtx) {
+                trendsChart = new Chart(trendsCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                        datasets: [{
+                            label: 'Applications',
+                            data: [120, 145, 168, 189, 205, 234],
+                            backgroundColor: 'rgba(59, 130, 246, 0.8)'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        function exportReport() {
+            // TODO: Implement PDF export
+            alert('Export functionality will be implemented soon!');
+        }
+
+        // Load reports on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadReports();
+        });
+    </script>
+</body>
+</html>
+

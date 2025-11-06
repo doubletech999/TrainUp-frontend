@@ -146,8 +146,36 @@
         <main class="main-content">
             <div class="page-header">
                 <div>
-                    <h1>My Evaluations ⭐</h1>
+                    <h1>
+                        <span>My Evaluations</span>
+                        <i class="fas fa-star"></i>
+                    </h1>
                     <p>Track your performance and feedback from supervisors and companies</p>
+                </div>
+                <div class="notifications-header">
+                    <div class="notification-icon-wrapper" onclick="goToNotificationsPage()">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge hidden" id="notificationBadge">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notifications Dropdown -->
+            <div class="notifications-dropdown" id="notificationsDropdown">
+                <div class="notifications-dropdown-header">
+                    <h3>Notifications</h3>
+                    <button class="mark-all-read" onclick="markAllNotificationsAsRead()">
+                        Mark all as read
+                    </button>
+                </div>
+                <div class="notifications-list" id="notificationsList">
+                    <div class="notifications-empty">
+                        <i class="fas fa-bell-slash"></i>
+                        <p>No notifications</p>
+                    </div>
+                </div>
+                <div class="notifications-dropdown-footer">
+                    <a href="notifications.html">View all notifications</a>
                 </div>
             </div>
 
@@ -196,25 +224,38 @@
 
             <style>
                 .filter-tab {
-                    background: none;
-                    border: none;
                     padding: 0.75rem 1.5rem;
-                    font-size: 1rem;
-                    font-weight: 500;
-                    color: var(--text-secondary);
+                    background: white;
+                    border: 2px solid var(--border-color);
+                    border-radius: var(--radius-lg);
+                    font-weight: 600;
                     cursor: pointer;
-                    border-bottom: 3px solid transparent;
                     transition: var(--transition);
+                    color: var(--text-secondary);
+                    font-size: 0.9375rem;
+                    letter-spacing: 0.01em;
                     white-space: nowrap;
                 }
                 
                 .filter-tab:hover {
+                    border-color: var(--primary-light);
                     color: var(--primary-color);
+                    background: rgba(30, 58, 138, 0.05);
+                    transform: translateY(-1px);
+                    box-shadow: var(--shadow-sm);
                 }
                 
                 .filter-tab.active {
-                    color: var(--primary-color);
-                    border-bottom-color: var(--primary-color);
+                    background: var(--primary-gradient-elegant) !important;
+                    border-color: var(--primary-color) !important;
+                    color: #FFFFFF !important;
+                    box-shadow: var(--shadow-elegant);
+                    font-weight: 700;
+                    letter-spacing: 0.02em;
+                }
+                
+                .filter-tab.active * {
+                    color: #FFFFFF !important;
                 }
             </style>
 

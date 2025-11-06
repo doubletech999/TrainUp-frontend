@@ -98,13 +98,41 @@
         <main class="main-content">
             <div class="page-header">
                 <div>
-                    <h1>Edit Profile ✏️</h1>
+                    <h1>
+                        <span>Edit Profile</span>
+                        <i class="fas fa-edit"></i>
+                    </h1>
                     <p>Update your information to enhance your profile</p>
                 </div>
-                <a href="profile.html" class="btn btn-outline">
-                    <i class="fas fa-times"></i>
-                    Cancel
-                </a>
+                <div class="notifications-header">
+                    <div class="notification-icon-wrapper" onclick="goToNotificationsPage()">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge hidden" id="notificationBadge">0</span>
+                    </div>
+                    <a href="profile.html" class="btn btn-outline">
+                        <i class="fas fa-times"></i>
+                        Cancel
+                    </a>
+                </div>
+            </div>
+
+            <!-- Notifications Dropdown -->
+            <div class="notifications-dropdown" id="notificationsDropdown">
+                <div class="notifications-dropdown-header">
+                    <h3>Notifications</h3>
+                    <button class="mark-all-read" onclick="markAllNotificationsAsRead()">
+                        Mark all as read
+                    </button>
+                </div>
+                <div class="notifications-list" id="notificationsList">
+                    <div class="notifications-empty">
+                        <i class="fas fa-bell-slash"></i>
+                        <p>No notifications</p>
+                    </div>
+                </div>
+                <div class="notifications-dropdown-footer">
+                    <a href="notifications.html">View all notifications</a>
+                </div>
             </div>
 
             <div id="alertMessage" class="alert" style="display: none;"></div>

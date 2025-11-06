@@ -183,15 +183,27 @@ function updateSidebarBadge(count) {
  * Update header notification badge
  */
 function updateHeaderBadge(count) {
+    const headerBadge = document.getElementById('notificationBadge');
+    
+    if (headerBadge) {
+        if (count > 0) {
+            headerBadge.textContent = count > 99 ? '99+' : count;
+            headerBadge.classList.remove('hidden');
+        } else {
+            headerBadge.classList.add('hidden');
+        }
+    }
+    
+    // Also update old selector if exists
     const headerNotificationIcon = document.querySelector('.header-notifications, .notification-icon, [data-notification-icon]');
 
     if (headerNotificationIcon) {
-        let headerBadge = headerNotificationIcon.querySelector('.notification-count');
+        let headerBadgeOld = headerNotificationIcon.querySelector('.notification-count');
 
-        if (!headerBadge && count > 0) {
-            headerBadge = document.createElement('span');
-            headerBadge.className = 'notification-count';
-            headerBadge.style.cssText = `
+        if (!headerBadgeOld && count > 0) {
+            headerBadgeOld = document.createElement('span');
+            headerBadgeOld.className = 'notification-count';
+            headerBadgeOld.style.cssText = `
                 position: absolute;
                 top: -5px;
                 right: -5px;
@@ -206,15 +218,15 @@ function updateHeaderBadge(count) {
                 z-index: 10;
             `;
             headerNotificationIcon.style.position = 'relative';
-            headerNotificationIcon.appendChild(headerBadge);
+            headerNotificationIcon.appendChild(headerBadgeOld);
         }
 
-        if (headerBadge) {
+        if (headerBadgeOld) {
             if (count > 0) {
-                headerBadge.textContent = count > 99 ? '99+' : count;
-                headerBadge.style.display = 'block';
+                headerBadgeOld.textContent = count > 99 ? '99+' : count;
+                headerBadgeOld.style.display = 'block';
             } else {
-                headerBadge.style.display = 'none';
+                headerBadgeOld.style.display = 'none';
             }
         }
     }
@@ -474,9 +486,162 @@ function addNotificationStyles() {
     document.head.appendChild(style);
 }
 
+/**
+ * Navigate to notifications page
+ */
+function goToNotificationsPage() {
+    // Determine the correct path based on current page
+    const currentPath = window.location.pathname;
+    let notificationsPath = 'notifications.html';
+    
+    // If we're in a subdirectory, keep the same path level
+    if (currentPath.includes('/student/')) {
+        notificationsPath = 'notifications.html';
+    } else if (currentPath.includes('/company/')) {
+        notificationsPath = 'notifications.html';
+    } else if (currentPath.includes('/admin/')) {
+        notificationsPath = 'notifications.html';
+    } else if (currentPath.includes('/supervisor/')) {
+        notificationsPath = 'notifications.html';
+    }
+    
+    // Navigate to notifications page
+    window.location.href = notificationsPath;
+}
+
+/**
+ * Toggle notifications dropdown (kept for backward compatibility if needed)
+ */
+function toggleNotificationsDropdown() {
+    const dropdown = document.getElementById('notificationsDropdown');
+    if (!dropdown) return;
+    
+    dropdown.classList.toggle('active');
+    
+    // If opening, load notifications
+    if (dropdown.classList.contains('active')) {
+        loadNotificationsDropdown();
+    }
+}
+
+/**
+ * Load notifications in dropdown
+ */
+async function loadNotificationsDropdown() {
+    const notificationsList = document.getElementById('notificationsList');
+    if (!notificationsList) return;
+    
+    try {
+        const response = await apiRequest('/notifications/recent?limit=10', {
+            method: 'GET'
+        });
+        
+        if (response.success && response.data && response.data.length > 0) {
+            displayNotificationsInDropdown(response.data);
+        } else {
+            notificationsList.innerHTML = `
+                <div class="notifications-empty">
+                    <i class="fas fa-bell-slash"></i>
+                    <p>No notifications</p>
+                </div>
+            `;
+        }
+    } catch (error) {
+        console.error('Error loading notifications:', error);
+        notificationsList.innerHTML = `
+            <div class="notifications-empty">
+                <i class="fas fa-exclamation-circle"></i>
+                <p>Failed to load notifications</p>
+            </div>
+        `;
+    }
+}
+
+/**
+ * Display notifications in dropdown
+ */
+function displayNotificationsInDropdown(notifications) {
+    const notificationsList = document.getElementById('notificationsList');
+    if (!notificationsList) return;
+    
+    notificationsList.innerHTML = notifications.map(notification => {
+        const iconClass = getNotificationIconClass(notification.type);
+        const isUnread = !notification.read;
+        const timeAgo = formatTimeAgo(notification.createdAt);
+        
+        return `
+            <div class="notification-item ${isUnread ? 'unread' : ''}" onclick="handleNotificationClick('${notification.id}')">
+                <div class="notification-icon ${iconClass}">
+                    <i class="${getNotificationIcon(notification.type)}"></i>
+                </div>
+                <div class="notification-content">
+                    <h4>${notification.title || 'Notification'}</h4>
+                    <p>${notification.message || ''}</p>
+                    <span class="notification-time">${timeAgo}</span>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+/**
+ * Get notification icon class
+ */
+function getNotificationIconClass(type) {
+    if (type.includes('APPLICATION')) return 'application';
+    if (type.includes('INTERNSHIP')) return 'internship';
+    if (type.includes('EVALUATION')) return 'evaluation';
+    return 'system';
+}
+
+/**
+ * Handle notification click
+ */
+async function handleNotificationClick(notificationId) {
+    // Mark as read
+    await markNotificationAsRead(notificationId);
+    
+    // Close dropdown
+    const dropdown = document.getElementById('notificationsDropdown');
+    if (dropdown) {
+        dropdown.classList.remove('active');
+    }
+    
+    // Navigate to notifications page
+    window.location.href = 'notifications.html';
+}
+
+/**
+ * Close notifications dropdown when clicking outside
+ */
+document.addEventListener('click', function(event) {
+    const dropdown = document.getElementById('notificationsDropdown');
+    const iconWrapper = document.querySelector('.notification-icon-wrapper');
+    
+    if (dropdown && iconWrapper && !dropdown.contains(event.target) && !iconWrapper.contains(event.target)) {
+        dropdown.classList.remove('active');
+    }
+});
+
+// Listen for notifications updates
+window.addEventListener('notificationsUpdated', function(event) {
+    if (event.detail && event.detail.notifications) {
+        const dropdown = document.getElementById('notificationsDropdown');
+        if (dropdown && dropdown.classList.contains('active')) {
+            displayNotificationsInDropdown(event.detail.notifications);
+        }
+    }
+});
+
 // Auto-initialize when DOM is ready
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initializeNotifications);
 } else {
     initializeNotifications();
 }
+
+// Make functions globally available
+window.goToNotificationsPage = goToNotificationsPage;
+window.toggleNotificationsDropdown = toggleNotificationsDropdown;
+window.markAllNotificationsAsRead = markAllNotificationsAsRead;
+window.handleNotificationClick = handleNotificationClick;

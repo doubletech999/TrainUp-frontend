@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Management - Admin - TrainUp</title>
+    <title>Companies - Admin - TrainUp</title>
 
     <!-- CSS Files -->
     <link rel="stylesheet" href="../../css/style.css">
@@ -28,7 +28,7 @@
                     <i class="fas fa-home"></i>
                     <span>Dashboard</span>
                 </a>
-                <a href="users.html" class="nav-item active">
+                <a href="users.html" class="nav-item">
                     <i class="fas fa-users"></i>
                     <span>User Management</span>
                 </a>
@@ -36,7 +36,7 @@
                     <i class="fas fa-briefcase"></i>
                     <span>Internships Review</span>
                 </a>
-                <a href="companies.html" class="nav-item">
+                <a href="companies.html" class="nav-item active">
                     <i class="fas fa-building"></i>
                     <span>Companies</span>
                 </a>
@@ -70,10 +70,10 @@
             <div class="page-header">
                 <div>
                     <h1>
-                        <span>User Management</span>
-                        <i class="fas fa-users"></i>
+                        <span>Companies</span>
+                        <i class="fas fa-building"></i>
                     </h1>
-                    <p>Manage all system users - students, companies, and supervisors</p>
+                    <p>Manage and monitor all registered companies</p>
                 </div>
                 <div class="notifications-header">
                     <div class="notification-icon-wrapper" onclick="goToNotificationsPage()">
@@ -81,13 +81,9 @@
                         <span class="notification-badge hidden" id="notificationBadge">0</span>
                     </div>
                     <div style="display: flex; gap: 0.75rem;">
-                        <button class="btn btn-outline" onclick="exportUsers()">
+                        <button class="btn btn-outline" onclick="exportCompanies()">
                             <i class="fas fa-download"></i>
                             Export
-                        </button>
-                        <button class="btn btn-primary" onclick="showAddUserModal()">
-                            <i class="fas fa-user-plus"></i>
-                            Add User
                         </button>
                     </div>
                 </div>
@@ -115,45 +111,45 @@
             <!-- Alert Messages -->
             <div id="alertMessage" class="alert" style="display: none;"></div>
 
-            <!-- Users Stats -->
+            <!-- Companies Stats -->
             <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-icon" style="background: rgba(59, 130, 246, 0.1);">
-                        <i class="fas fa-users" style="color: #3b82f6;"></i>
-                    </div>
-                    <div class="stat-content">
-                        <div class="stat-value" id="totalUsers">0</div>
-                        <div class="stat-label">Total Users</div>
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-icon" style="background: rgba(16, 185, 129, 0.1);">
-                        <i class="fas fa-user-graduate" style="color: #10b981;"></i>
-                    </div>
-                    <div class="stat-content">
-                        <div class="stat-value" id="totalStudents">0</div>
-                        <div class="stat-label">Students</div>
-                    </div>
-                </div>
-
                 <div class="stat-card">
                     <div class="stat-icon" style="background: rgba(139, 92, 246, 0.1);">
                         <i class="fas fa-building" style="color: #8b5cf6;"></i>
                     </div>
                     <div class="stat-content">
                         <div class="stat-value" id="totalCompanies">0</div>
-                        <div class="stat-label">Companies</div>
+                        <div class="stat-label">Total Companies</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: rgba(34, 197, 94, 0.1);">
+                        <i class="fas fa-check-circle" style="color: #22c55e;"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="verifiedCompanies">0</div>
+                        <div class="stat-label">Verified</div>
                     </div>
                 </div>
 
                 <div class="stat-card">
                     <div class="stat-icon" style="background: rgba(245, 158, 11, 0.1);">
-                        <i class="fas fa-user-tie" style="color: #f59e0b;"></i>
+                        <i class="fas fa-clock" style="color: #f59e0b;"></i>
                     </div>
                     <div class="stat-content">
-                        <div class="stat-value" id="totalSupervisors">0</div>
-                        <div class="stat-label">Supervisors</div>
+                        <div class="stat-value" id="pendingCompanies">0</div>
+                        <div class="stat-label">Pending</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: rgba(239, 68, 68, 0.1);">
+                        <i class="fas fa-ban" style="color: #ef4444;"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="rejectedCompanies">0</div>
+                        <div class="stat-label">Rejected</div>
                     </div>
                 </div>
             </div>
@@ -165,25 +161,21 @@
                         <input
                             type="text"
                             id="searchInput"
-                            placeholder="Search by name, email, or ID..."
-                            onkeyup="filterUsers()"
+                            placeholder="Search by company name, email, or industry..."
+                            onkeyup="filterCompanies()"
                         >
                     </div>
 
-                    <select id="userTypeFilter" class="form-control" onchange="filterUsers()" style="min-width: 150px;">
-                        <option value="">All Types</option>
-                        <option value="STUDENT">Students</option>
-                        <option value="COMPANY">Companies</option>
-                        <option value="SUPERVISOR">Supervisors</option>
-                        <option value="ADMIN">Admins</option>
+                    <select id="statusFilter" class="form-control" onchange="filterCompanies()" style="min-width: 150px;">
+                        <option value="">All Status</option>
+                        <option value="VERIFIED">Verified</option>
+                        <option value="PENDING">Pending</option>
+                        <option value="REJECTED">Rejected</option>
+                        <option value="SUSPENDED">Suspended</option>
                     </select>
 
-                    <select id="statusFilter" class="form-control" onchange="filterUsers()" style="min-width: 150px;">
-                        <option value="">All Status</option>
-                        <option value="ACTIVE">Active</option>
-                        <option value="INACTIVE">Inactive</option>
-                        <option value="SUSPENDED">Suspended</option>
-                        <option value="PENDING">Pending Verification</option>
+                    <select id="industryFilter" class="form-control" onchange="filterCompanies()" style="min-width: 150px;">
+                        <option value="">All Industries</option>
                     </select>
 
                     <button class="btn btn-outline" onclick="resetFilters()">
@@ -193,58 +185,66 @@
                 </div>
             </div>
 
-            <!-- Users List -->
+            <!-- Companies List -->
             <div class="content-section">
                 <div class="section-header">
-                    <h2>Users (<span id="usersCount">0</span>)</h2>
+                    <h2>Companies (<span id="companiesCount">0</span>)</h2>
                 </div>
 
-                <div id="usersList">
+                <div id="companiesList">
                     <div class="empty-state">
                         <i class="fas fa-spinner fa-spin"></i>
-                        <p>Loading users...</p>
+                        <p>Loading companies...</p>
                     </div>
                 </div>
             </div>
         </main>
     </div>
 
-    <!-- User Details Modal -->
-    <div class="modal" id="userModal">
+    <!-- Company Details Modal -->
+    <div class="modal" id="companyModal">
         <div class="modal-content" style="max-width: 800px;">
             <div class="modal-header">
-                <h2>User Details</h2>
-                <button class="modal-close" onclick="closeUserModal()">
+                <h2>Company Details</h2>
+                <button class="modal-close" onclick="closeCompanyModal()">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
 
             <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
-                <div id="userDetails"></div>
+                <div id="companyDetails"></div>
             </div>
 
             <div class="modal-footer">
-                <button class="btn btn-outline" onclick="closeUserModal()">
+                <button class="btn btn-outline" onclick="closeCompanyModal()">
                     Close
                 </button>
-                <button class="btn btn-warning" id="suspendUserBtn" style="display: none;">
+                <button class="btn btn-warning" id="suspendCompanyBtn" style="display: none;">
                     <i class="fas fa-ban"></i>
-                    Suspend User
+                    Suspend Company
                 </button>
-                <button class="btn btn-success" id="activateUserBtn" style="display: none;">
+                <button class="btn btn-success" id="activateCompanyBtn" style="display: none;">
                     <i class="fas fa-check"></i>
-                    Activate User
+                    Activate Company
                 </button>
-                <button class="btn btn-danger" id="deleteUserBtn" style="display: none;">
+                <button class="btn btn-outline" id="rejectBtn" style="border-color: var(--danger-color); color: var(--danger-color); display: none;">
+                    <i class="fas fa-times"></i>
+                    Reject
+                </button>
+                <button class="btn btn-primary" id="approveBtn" style="display: none;">
+                    <i class="fas fa-check"></i>
+                    Approve & Verify
+                </button>
+                <button class="btn btn-danger" id="deleteCompanyBtn" style="display: none;">
                     <i class="fas fa-trash"></i>
-                    Delete User
+                    Delete Company
                 </button>
             </div>
         </div>
     </div>
 
     <style>
-        .user-card {
+        .company-card {
             display: flex;
             align-items: center;
             gap: 1rem;
@@ -256,30 +256,30 @@
             transition: all 0.2s;
         }
 
-        .user-card:hover {
+        .company-card:hover {
             border-color: var(--primary-color);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
-        .user-avatar-large {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: var(--primary-color);
+        .company-logo-large {
+            width: 60px;
+            height: 60px;
+            border-radius: var(--radius-md);
+            background: var(--primary-gradient-elegant);
             color: white;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
-            font-size: 1.25rem;
+            font-size: 1.5rem;
             flex-shrink: 0;
         }
 
-        .user-info {
+        .company-info {
             flex: 1;
         }
 
-        .user-type-badge {
+        .company-status-badge {
             display: inline-block;
             padding: 0.25rem 0.75rem;
             border-radius: 999px;
@@ -288,55 +288,27 @@
             text-transform: uppercase;
         }
 
-        .user-type-badge.student {
-            background: rgba(16, 185, 129, 0.1);
-            color: #10b981;
-        }
-
-        .user-type-badge.company {
-            background: rgba(139, 92, 246, 0.1);
-            color: #8b5cf6;
-        }
-
-        .user-type-badge.supervisor {
-            background: rgba(245, 158, 11, 0.1);
-            color: #f59e0b;
-        }
-
-        .user-type-badge.admin {
-            background: rgba(239, 68, 68, 0.1);
-            color: #ef4444;
-        }
-
-        .user-status-badge {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 999px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        .user-status-badge.active {
+        .company-status-badge.verified {
             background: rgba(34, 197, 94, 0.1);
             color: #22c55e;
         }
 
-        .user-status-badge.inactive {
-            background: rgba(107, 114, 128, 0.1);
-            color: #6b7280;
-        }
-
-        .user-status-badge.suspended {
-            background: rgba(239, 68, 68, 0.1);
-            color: #ef4444;
-        }
-
-        .user-status-badge.pending {
+        .company-status-badge.pending {
             background: rgba(245, 158, 11, 0.1);
             color: #f59e0b;
         }
 
-        .user-actions {
+        .company-status-badge.rejected {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+
+        .company-status-badge.suspended {
+            background: rgba(107, 114, 128, 0.1);
+            color: #6b7280;
+        }
+
+        .company-actions {
             display: flex;
             gap: 0.5rem;
         }
@@ -348,6 +320,7 @@
     <script src="../../js/api.js"></script>
     <script src="../../js/notifications-handler.js"></script>
     <script src="../../js/global-actions.js"></script>
-    <script src="../../js/admin-users.js"></script>
+    <script src="../../js/admin-companies.js"></script>
 </body>
 </html>
+

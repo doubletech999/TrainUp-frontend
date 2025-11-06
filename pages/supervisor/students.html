@@ -68,8 +68,38 @@
         <!-- Main Content -->
         <main class="main-content">
             <div class="page-header">
-                <h1>Monitor Students 🎓</h1>
-                <p>Track student internship progress and performance</p>
+                <div>
+                    <h1>
+                        <span>Monitor Students</span>
+                        <i class="fas fa-user-graduate"></i>
+                    </h1>
+                    <p>Track student internship progress and performance</p>
+                </div>
+                <div class="notifications-header">
+                    <div class="notification-icon-wrapper" onclick="goToNotificationsPage()">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge hidden" id="notificationBadge">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notifications Dropdown -->
+            <div class="notifications-dropdown" id="notificationsDropdown">
+                <div class="notifications-dropdown-header">
+                    <h3>Notifications</h3>
+                    <button class="mark-all-read" onclick="markAllNotificationsAsRead()">
+                        Mark all as read
+                    </button>
+                </div>
+                <div class="notifications-list" id="notificationsList">
+                    <div class="notifications-empty">
+                        <i class="fas fa-bell-slash"></i>
+                        <p>No notifications</p>
+                    </div>
+                </div>
+                <div class="notifications-dropdown-footer">
+                    <a href="notifications.html">View all notifications</a>
+                </div>
             </div>
 
             <!-- Alert Messages -->
@@ -161,6 +191,7 @@
     <script src="../../js/auth.js"></script>
     <script src="../../js/api.js"></script>
     <script src="../../js/notifications-handler.js"></script>
+    <script src="../../js/global-actions.js"></script>
     <script src="../../js/supervisor-students.js"></script>
 </body>
 </html>

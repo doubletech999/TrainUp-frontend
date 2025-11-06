@@ -32,7 +32,7 @@
                     <i class="fas fa-briefcase"></i>
                     <span>Browse Internships</span>
                 </a>
-                <a href="applications.html" class="nav-item">
+                <a href="my-applications.html" class="nav-item">
                     <i class="fas fa-file-alt"></i>
                     <span>My Applications</span>
                 </a>
@@ -63,12 +63,43 @@
 
         <!-- Main Content -->
         <main class="main-content">
-            <!-- Back Button -->
-            <div style="margin-bottom: 1rem;">
-                <a href="internships.html" class="btn btn-outline btn-sm">
-                    <i class="fas fa-arrow-left"></i>
-                    Back to Internships
-                </a>
+            <div class="page-header">
+                <div>
+                    <h1>
+                        <span>Internship Details</span>
+                        <i class="fas fa-briefcase"></i>
+                    </h1>
+                    <p>View and apply for internship opportunities</p>
+                </div>
+                <div class="notifications-header">
+                    <a href="internships.html" class="btn btn-outline btn-sm" style="margin-right: 0.75rem;">
+                        <i class="fas fa-arrow-left"></i>
+                        Back
+                    </a>
+                    <div class="notification-icon-wrapper" onclick="goToNotificationsPage()">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge hidden" id="notificationBadge">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notifications Dropdown -->
+            <div class="notifications-dropdown" id="notificationsDropdown">
+                <div class="notifications-dropdown-header">
+                    <h3>Notifications</h3>
+                    <button class="mark-all-read" onclick="markAllNotificationsAsRead()">
+                        Mark all as read
+                    </button>
+                </div>
+                <div class="notifications-list" id="notificationsList">
+                    <div class="notifications-empty">
+                        <i class="fas fa-bell-slash"></i>
+                        <p>No notifications</p>
+                    </div>
+                </div>
+                <div class="notifications-dropdown-footer">
+                    <a href="notifications.html">View all notifications</a>
+                </div>
             </div>
 
             <!-- Alert Messages -->
@@ -141,6 +172,7 @@
     <script src="../../js/auth.js"></script>
     <script src="../../js/api.js"></script>
     <script src="../../js/notifications-handler.js"></script>
+    <script src="../../js/global-actions.js"></script>
     <script src="../../js/internship-details.js"></script>
 </body>
 </html>

@@ -349,11 +349,18 @@ async function viewStudentDetails(studentId) {
 
 /**
  * Close student modal
+ * This function is defined here to override the global one for better functionality
  */
 function closeStudentModal() {
-    document.getElementById('studentModal').classList.remove('active');
+    const modal = document.getElementById('studentModal');
+    if (modal) {
+        modal.classList.remove('active');
+    }
     selectedStudent = null;
 }
+
+// Make sure this function is available globally
+window.closeStudentModal = closeStudentModal;
 
 /**
  * View student progress
@@ -384,7 +391,10 @@ async function viewStudentProgress(studentId) {
 function displayProgressReport(progressData) {
     // This would open a new detailed progress view
     // For now, show alert
-    showAlert('Progress report feature coming soon!', 'info');
+    const student = allStudents.find(s => s.id === studentId);
+    if (student) {
+        showAlert(`Progress report for ${student.profile?.firstName || 'Student'} will be available soon. This feature will show student's internship progress, evaluations, and achievements.`, 'info');
+    }
     console.log('Progress data:', progressData);
 }
 
@@ -430,3 +440,9 @@ function exportStudentData() {
 
     showAlert('Student data exported successfully!', 'success');
 }
+
+// Make sure these functions are available globally
+window.exportStudentData = exportStudentData;
+window.viewStudentDetails = viewStudentDetails;
+window.viewStudentProgress = viewStudentProgress;
+window.filterStudents = filterStudents;

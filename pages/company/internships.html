@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Company Dashboard - TrainUp</title>
+    <title>My Internships - Company - TrainUp</title>
     
     <!-- CSS Files -->
     <link rel="stylesheet" href="../../css/style.css">
@@ -24,11 +24,11 @@
             </div>
             
             <nav class="sidebar-nav">
-                <a href="dashboard.html" class="nav-item active">
+                <a href="dashboard.html" class="nav-item">
                     <i class="fas fa-home"></i>
                     <span>Dashboard</span>
                 </a>
-                <a href="internships.html" class="nav-item">
+                <a href="internships.html" class="nav-item active">
                     <i class="fas fa-briefcase"></i>
                     <span>My Internships</span>
                 </a>
@@ -65,17 +65,21 @@
         <main class="main-content">
             <div class="page-header">
                 <div>
-                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.625rem;">
-                        <h1 style="margin: 0;">Welcome, <span id="welcomeName">Company</span>!</h1>
-                        <span style="font-size: 2.5rem; line-height: 1;">🏢</span>
-                    </div>
-                    <p>Manage your internships and connect with talented students</p>
+                    <h1>
+                        <span>My Internships</span>
+                        <i class="fas fa-briefcase"></i>
+                    </h1>
+                    <p>Manage your posted internships and track their performance</p>
                 </div>
                 <div class="notifications-header">
                     <div class="notification-icon-wrapper" onclick="goToNotificationsPage()">
                         <i class="fas fa-bell"></i>
                         <span class="notification-badge hidden" id="notificationBadge">0</span>
                     </div>
+                    <a href="create-internship.html" class="btn btn-primary">
+                        <i class="fas fa-plus"></i>
+                        Post New Internship
+                    </a>
                 </div>
             </div>
 
@@ -101,106 +105,83 @@
             <!-- Alert Messages -->
             <div id="alertMessage" class="alert" style="display: none;"></div>
 
-            <!-- Stats Cards -->
+            <!-- Stats -->
             <div class="stats-grid">
                 <div class="stat-card">
-                    <div class="stat-card-header">
-                        <div>
-                            <div class="stat-value" id="totalInternships">0</div>
-                            <div class="stat-label">Total Internships</div>
-                        </div>
-                        <div class="stat-card-icon primary">
-                            <i class="fas fa-briefcase"></i>
-                        </div>
+                    <div class="stat-icon" style="background: rgba(59, 130, 246, 0.1);">
+                        <i class="fas fa-briefcase" style="color: #3b82f6;"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="totalInternships">0</div>
+                        <div class="stat-label">Total Internships</div>
                     </div>
                 </div>
 
                 <div class="stat-card">
-                    <div class="stat-card-header">
-                        <div>
-                            <div class="stat-value" id="activeInternships">0</div>
-                            <div class="stat-label">Active Internships</div>
-                        </div>
-                        <div class="stat-card-icon success">
-                            <i class="fas fa-check-circle"></i>
-                        </div>
+                    <div class="stat-icon" style="background: rgba(34, 197, 94, 0.1);">
+                        <i class="fas fa-check-circle" style="color: #22c55e;"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="activeInternships">0</div>
+                        <div class="stat-label">Active</div>
                     </div>
                 </div>
 
                 <div class="stat-card">
-                    <div class="stat-card-header">
-                        <div>
-                            <div class="stat-value" id="totalApplications">0</div>
-                            <div class="stat-label">Total Applications</div>
-                        </div>
-                        <div class="stat-card-icon warning">
-                            <i class="fas fa-file-alt"></i>
-                        </div>
+                    <div class="stat-icon" style="background: rgba(139, 92, 246, 0.1);">
+                        <i class="fas fa-users" style="color: #8b5cf6;"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="totalApplications">0</div>
+                        <div class="stat-label">Total Applications</div>
                     </div>
                 </div>
 
                 <div class="stat-card">
-                    <div class="stat-card-header">
-                        <div>
-                            <div class="stat-value" id="pendingApplications">0</div>
-                            <div class="stat-label">Pending Review</div>
-                        </div>
-                        <div class="stat-card-icon info">
-                            <i class="fas fa-clock"></i>
-                        </div>
+                    <div class="stat-icon" style="background: rgba(245, 158, 11, 0.1);">
+                        <i class="fas fa-eye" style="color: #f59e0b;"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="totalViews">0</div>
+                        <div class="stat-label">Total Views</div>
                     </div>
                 </div>
             </div>
 
-            <!-- Quick Actions -->
+            <!-- Filters -->
             <div class="content-section">
-                <div class="section-header">
-                    <h2>Quick Actions</h2>
-                </div>
-                
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
-                    <a href="create-internship.html" class="btn btn-primary" style="padding: 1.5rem; text-align: center; text-decoration: none;">
-                        <i class="fas fa-plus-circle" style="font-size: 2rem; display: block; margin-bottom: 0.5rem;"></i>
-                        Post New Internship
-                    </a>
-                    
-                    <a href="applications.html" class="btn btn-outline" style="padding: 1.5rem; text-align: center; text-decoration: none;">
-                        <i class="fas fa-users" style="font-size: 2rem; display: block; margin-bottom: 0.5rem;"></i>
-                        View Applications
-                    </a>
-                    
-                    <a href="internships.html" class="btn btn-outline" style="padding: 1.5rem; text-align: center; text-decoration: none;">
-                        <i class="fas fa-briefcase" style="font-size: 2rem; display: block; margin-bottom: 0.5rem;"></i>
-                        Manage Internships
-                    </a>
-                </div>
-            </div>
-
-            <!-- Recent Applications -->
-            <div class="content-section">
-                <div class="section-header">
-                    <h2>Recent Applications</h2>
-                    <a href="applications.html" class="btn btn-outline btn-sm">View All</a>
-                </div>
-                
-                <div id="recentApplications">
-                    <!-- Loading state -->
-                    <div class="empty-state">
-                        <i class="fas fa-spinner fa-spin"></i>
-                        <p>Loading applications...</p>
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
+                    <div class="form-group" style="flex: 1; min-width: 250px; margin: 0;">
+                        <input
+                            type="text"
+                            id="searchInput"
+                            placeholder="Search by title, location, or status..."
+                            onkeyup="filterInternships()"
+                        >
                     </div>
+
+                    <select id="statusFilter" class="form-control" onchange="filterInternships()" style="min-width: 150px;">
+                        <option value="">All Status</option>
+                        <option value="ACTIVE">Active</option>
+                        <option value="PAUSED">Paused</option>
+                        <option value="CLOSED">Closed</option>
+                        <option value="DRAFT">Draft</option>
+                    </select>
+
+                    <button class="btn btn-outline" onclick="resetFilters()">
+                        <i class="fas fa-redo"></i>
+                        Reset
+                    </button>
                 </div>
             </div>
 
-            <!-- Active Internships -->
+            <!-- Internships List -->
             <div class="content-section">
                 <div class="section-header">
-                    <h2>Active Internships</h2>
-                    <a href="internships.html" class="btn btn-outline btn-sm">View All</a>
+                    <h2>Internships (<span id="internshipsCount">0</span>)</h2>
                 </div>
-                
-                <div id="activeInternshipsList">
-                    <!-- Loading state -->
+
+                <div id="internshipsList">
                     <div class="empty-state">
                         <i class="fas fa-spinner fa-spin"></i>
                         <p>Loading internships...</p>
@@ -216,6 +197,7 @@
     <script src="../../js/api.js"></script>
     <script src="../../js/notifications-handler.js"></script>
     <script src="../../js/global-actions.js"></script>
-    <script src="../../js/company-dashboard.js"></script>
+    <script src="../../js/company-internships.js"></script>
 </body>
 </html>
+

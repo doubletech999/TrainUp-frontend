@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - Supervisor - TrainUp</title>
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/dashboard.css">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <i class="fas fa-graduation-cap"></i>
+                    TrainUp
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="companies.html" class="nav-item">
+                    <i class="fas fa-building"></i>
+                    <span>Verify Companies</span>
+                </a>
+                <a href="internships.html" class="nav-item">
+                    <i class="fas fa-briefcase"></i>
+                    <span>Review Internships</span>
+                </a>
+                <a href="students.html" class="nav-item">
+                    <i class="fas fa-user-graduate"></i>
+                    <span>Monitor Students</span>
+                </a>
+                <a href="reports.html" class="nav-item">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Reports</span>
+                </a>
+                <a href="profile.html" class="nav-item active">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+                <a href="#" class="nav-item" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-avatar" id="userAvatar">S</div>
+                    <div class="user-info">
+                        <h4 id="supervisorName">Supervisor</h4>
+                        <p id="userEmail">supervisor@example.com</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="page-header">
+                <div>
+                    <h1>
+                        <span>My Profile</span>
+                        <i class="fas fa-user"></i>
+                    </h1>
+                    <p>Manage your supervisor profile and account settings</p>
+                </div>
+                <div class="notifications-header">
+                    <div class="notification-icon-wrapper" onclick="goToNotificationsPage()">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge hidden" id="notificationBadge">0</span>
+                    </div>
+                    <button class="btn btn-primary" onclick="editProfile()">
+                        <i class="fas fa-edit"></i>
+                        Edit Profile
+                    </button>
+                </div>
+            </div>
+
+            <!-- Notifications Dropdown -->
+            <div class="notifications-dropdown" id="notificationsDropdown">
+                <div class="notifications-dropdown-header">
+                    <h3>Notifications</h3>
+                    <button class="mark-all-read" onclick="markAllNotificationsAsRead()">
+                        Mark all as read
+                    </button>
+                </div>
+                <div class="notifications-list" id="notificationsList">
+                    <div class="notifications-empty">
+                        <i class="fas fa-bell-slash"></i>
+                        <p>No notifications</p>
+                    </div>
+                </div>
+                <div class="notifications-dropdown-footer">
+                    <a href="notifications.html">View all notifications</a>
+                </div>
+            </div>
+
+            <!-- Alert Messages -->
+            <div id="alertMessage" class="alert" style="display: none;"></div>
+
+            <!-- Profile Content -->
+            <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem; margin-top: 2rem;">
+                <!-- Profile Sidebar -->
+                <div class="content-section">
+                    <div style="text-align: center; padding: 2rem 0;">
+                        <div class="user-avatar" style="width: 120px; height: 120px; margin: 0 auto 1.5rem; font-size: 3rem; box-shadow: var(--shadow-lg);">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        <h2 id="profileName">Dr. Supervisor Name</h2>
+                        <p style="color: var(--text-secondary); margin-bottom: 1rem;" id="profileTitle">Academic Supervisor</p>
+                        <div class="status-badge active" style="display: inline-block;">
+                            Active
+                        </div>
+                    </div>
+
+                    <!-- Quick Stats -->
+                    <div style="border-top: 2px solid var(--border-light); padding-top: 1.5rem; margin-top: 1.5rem;">
+                        <div style="display: grid; gap: 1rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: var(--bg-secondary); border-radius: var(--radius-lg);">
+                                <div>
+                                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary-color);" id="studentsCount">0</div>
+                                    <div style="font-size: 0.875rem; color: var(--text-secondary);">Supervised Students</div>
+                                </div>
+                                <i class="fas fa-user-graduate" style="font-size: 2rem; color: var(--primary-color); opacity: 0.3;"></i>
+                            </div>
+                            
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: var(--bg-secondary); border-radius: var(--radius-lg);">
+                                <div>
+                                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--success-color);" id="internshipsCount">0</div>
+                                    <div style="font-size: 0.875rem; color: var(--text-secondary);">Active Internships</div>
+                                </div>
+                                <i class="fas fa-briefcase" style="font-size: 2rem; color: var(--success-color); opacity: 0.3;"></i>
+                            </div>
+                            
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: var(--bg-secondary); border-radius: var(--radius-lg);">
+                                <div>
+                                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--accent-color);" id="ratingValue">0.0</div>
+                                    <div style="font-size: 0.875rem; color: var(--text-secondary);">Average Rating</div>
+                                </div>
+                                <i class="fas fa-star" style="font-size: 2rem; color: var(--accent-color); opacity: 0.3;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Profile Details -->
+                <div style="display: grid; gap: 2rem;">
+                    <!-- Personal Information -->
+                    <div class="content-section">
+                        <div class="section-header">
+                            <h2>
+                                <i class="fas fa-user" style="color: var(--primary-color);"></i>
+                                Personal Information
+                            </h2>
+                        </div>
+                        
+                        <div style="display: grid; gap: 1.5rem; margin-top: 1.5rem;">
+                            <div style="display: grid; grid-template-columns: 150px 1fr; gap: 1rem; align-items: start;">
+                                <label style="font-weight: 600; color: var(--text-primary); margin-top: 0.5rem;">
+                                    <i class="fas fa-id-card" style="color: var(--primary-color); margin-right: 0.5rem;"></i>
+                                    Full Name:
+                                </label>
+                                <div style="padding: 0.75rem; background: var(--bg-secondary); border-radius: var(--radius-lg);" id="profileFullName">
+                                    Dr. Supervisor Name
+                                </div>
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: 150px 1fr; gap: 1rem; align-items: start;">
+                                <label style="font-weight: 600; color: var(--text-primary); margin-top: 0.5rem;">
+                                    <i class="fas fa-envelope" style="color: var(--primary-color); margin-right: 0.5rem;"></i>
+                                    Email:
+                                </label>
+                                <div style="padding: 0.75rem; background: var(--bg-secondary); border-radius: var(--radius-lg);" id="profileEmail">
+                                    supervisor@university.edu
+                                </div>
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: 150px 1fr; gap: 1rem; align-items: start;">
+                                <label style="font-weight: 600; color: var(--text-primary); margin-top: 0.5rem;">
+                                    <i class="fas fa-phone" style="color: var(--primary-color); margin-right: 0.5rem;"></i>
+                                    Phone:
+                                </label>
+                                <div style="padding: 0.75rem; background: var(--bg-secondary); border-radius: var(--radius-lg);" id="profilePhone">
+                                    +1 234 567 8900
+                                </div>
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: 150px 1fr; gap: 1rem; align-items: start;">
+                                <label style="font-weight: 600; color: var(--text-primary); margin-top: 0.5rem;">
+                                    <i class="fas fa-building" style="color: var(--primary-color); margin-right: 0.5rem;"></i>
+                                    Department:
+                                </label>
+                                <div style="padding: 0.75rem; background: var(--bg-secondary); border-radius: var(--radius-lg);" id="profileDepartment">
+                                    Computer Science
+                                </div>
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: 150px 1fr; gap: 1rem; align-items: start;">
+                                <label style="font-weight: 600; color: var(--text-primary); margin-top: 0.5rem;">
+                                    <i class="fas fa-graduation-cap" style="color: var(--primary-color); margin-right: 0.5rem;"></i>
+                                    University:
+                                </label>
+                                <div style="padding: 0.75rem; background: var(--bg-secondary); border-radius: var(--radius-lg);" id="profileUniversity">
+                                    University Name
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Professional Information -->
+                    <div class="content-section">
+                        <div class="section-header">
+                            <h2>
+                                <i class="fas fa-briefcase" style="color: var(--primary-color);"></i>
+                                Professional Information
+                            </h2>
+                        </div>
+                        
+                        <div style="display: grid; gap: 1.5rem; margin-top: 1.5rem;">
+                            <div style="display: grid; grid-template-columns: 150px 1fr; gap: 1rem; align-items: start;">
+                                <label style="font-weight: 600; color: var(--text-primary); margin-top: 0.5rem;">
+                                    <i class="fas fa-user-tie" style="color: var(--primary-color); margin-right: 0.5rem;"></i>
+                                    Title:
+                                </label>
+                                <div style="padding: 0.75rem; background: var(--bg-secondary); border-radius: var(--radius-lg);" id="profileTitle">
+                                    Professor
+                                </div>
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: 150px 1fr; gap: 1rem; align-items: start;">
+                                <label style="font-weight: 600; color: var(--text-primary); margin-top: 0.5rem;">
+                                    <i class="fas fa-book" style="color: var(--primary-color); margin-right: 0.5rem;"></i>
+                                    Expertise:
+                                </label>
+                                <div style="padding: 0.75rem; background: var(--bg-secondary); border-radius: var(--radius-lg);" id="profileExpertise">
+                                    Software Engineering, Data Science
+                                </div>
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: 150px 1fr; gap: 1rem; align-items: start;">
+                                <label style="font-weight: 600; color: var(--text-primary); margin-top: 0.5rem;">
+                                    <i class="fas fa-calendar" style="color: var(--primary-color); margin-right: 0.5rem;"></i>
+                                    Joined:
+                                </label>
+                                <div style="padding: 0.75rem; background: var(--bg-secondary); border-radius: var(--radius-lg);" id="profileJoined">
+                                    January 2020
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Account Settings -->
+                    <div class="content-section">
+                        <div class="section-header">
+                            <h2>
+                                <i class="fas fa-cog" style="color: var(--primary-color);"></i>
+                                Account Settings
+                            </h2>
+                        </div>
+                        
+                        <div style="display: grid; gap: 1rem; margin-top: 1.5rem;">
+                            <button class="btn btn-outline" onclick="changePassword()" style="justify-content: flex-start; text-align: left;">
+                                <i class="fas fa-lock"></i>
+                                Change Password
+                            </button>
+                            
+                            <button class="btn btn-outline" onclick="notificationSettings()" style="justify-content: flex-start; text-align: left;">
+                                <i class="fas fa-bell"></i>
+                                Notification Settings
+                            </button>
+                            
+                            <button class="btn btn-outline" onclick="privacySettings()" style="justify-content: flex-start; text-align: left;">
+                                <i class="fas fa-shield-alt"></i>
+                                Privacy Settings
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- JavaScript Files -->
+    <script src="../../js/config.js"></script>
+    <script src="../../js/auth.js"></script>
+    <script src="../../js/api.js"></script>
+    <script src="../../js/notifications-handler.js"></script>
+    <script src="../../js/global-actions.js"></script>
+    <script>
+        function loadProfile() {
+            // TODO: Fetch supervisor profile from API
+            // Sample data
+            const profile = {
+                name: 'Dr. Supervisor Name',
+                email: 'supervisor@university.edu',
+                phone: '+1 234 567 8900',
+                department: 'Computer Science',
+                university: 'University Name',
+                title: 'Professor',
+                expertise: 'Software Engineering, Data Science',
+                joined: 'January 2020',
+                studentsCount: 125,
+                internshipsCount: 89,
+                rating: 4.7
+            };
+
+            // Update profile data
+            document.getElementById('profileName').textContent = profile.name;
+            document.getElementById('profileFullName').textContent = profile.name;
+            document.getElementById('profileEmail').textContent = profile.email;
+            document.getElementById('profilePhone').textContent = profile.phone;
+            document.getElementById('profileDepartment').textContent = profile.department;
+            document.getElementById('profileUniversity').textContent = profile.university;
+            document.getElementById('profileTitle').textContent = profile.title;
+            document.getElementById('profileExpertise').textContent = profile.expertise;
+            document.getElementById('profileJoined').textContent = profile.joined;
+            document.getElementById('studentsCount').textContent = profile.studentsCount;
+            document.getElementById('internshipsCount').textContent = profile.internshipsCount;
+            document.getElementById('ratingValue').textContent = profile.rating.toFixed(1);
+        }
+
+        function editProfile() {
+            // TODO: Open edit profile modal or redirect to edit page
+            alert('Edit profile functionality will be implemented soon!');
+        }
+
+        function changePassword() {
+            // TODO: Open change password modal
+            alert('Change password functionality will be implemented soon!');
+        }
+
+        function notificationSettings() {
+            // TODO: Open notification settings modal
+            alert('Notification settings will be implemented soon!');
+        }
+
+        function privacySettings() {
+            // TODO: Open privacy settings modal
+            alert('Privacy settings will be implemented soon!');
+        }
+
+        // Load profile on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProfile();
+        });
+    </script>
+</body>
+</html>
+

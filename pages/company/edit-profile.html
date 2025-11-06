@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Company Profile - TrainUp</title>
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/dashboard.css">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        
+        .form-group-full {
+            grid-column: 1 / -1;
+        }
+        
+        .form-group.error input,
+        .form-group.error select,
+        .form-group.error textarea {
+            border-color: var(--danger-color, #ef4444);
+            background-color: rgba(239, 68, 68, 0.05);
+        }
+        
+        .form-group.error label {
+            color: var(--danger-color, #ef4444);
+        }
+        
+        .form-group.error input:focus,
+        .form-group.error select:focus,
+        .form-group.error textarea:focus {
+            border-color: var(--danger-color, #ef4444);
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+        }
+        
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <i class="fas fa-graduation-cap"></i>
+                    TrainUp
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="internships.html" class="nav-item">
+                    <i class="fas fa-briefcase"></i>
+                    <span>My Internships</span>
+                </a>
+                <a href="applications.html" class="nav-item">
+                    <i class="fas fa-users"></i>
+                    <span>Applications</span>
+                </a>
+                <a href="create-internship.html" class="nav-item">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>Post Internship</span>
+                </a>
+                <a href="profile.html" class="nav-item active">
+                    <i class="fas fa-building"></i>
+                    <span>Company Profile</span>
+                </a>
+                <a href="#" class="nav-item" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-avatar" id="userAvatar">C</div>
+                    <div class="user-info">
+                        <h4 id="companyName">Company</h4>
+                        <p id="userEmail">company@example.com</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="page-header">
+                <div>
+                    <h1>
+                        <span>Edit Company Profile</span>
+                        <i class="fas fa-edit"></i>
+                    </h1>
+                    <p>Update your company information and settings</p>
+                </div>
+                <div class="notifications-header">
+                    <div class="notification-icon-wrapper" onclick="goToNotificationsPage()">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge hidden" id="notificationBadge">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notifications Dropdown -->
+            <div class="notifications-dropdown" id="notificationsDropdown">
+                <div class="notifications-dropdown-header">
+                    <h3>Notifications</h3>
+                    <button class="mark-all-read" onclick="markAllNotificationsAsRead()">
+                        Mark all as read
+                    </button>
+                </div>
+                <div class="notifications-list" id="notificationsList">
+                    <div class="notifications-empty">
+                        <i class="fas fa-bell-slash"></i>
+                        <p>No notifications</p>
+                    </div>
+                </div>
+                <div class="notifications-dropdown-footer">
+                    <a href="notifications.html">View all notifications</a>
+                </div>
+            </div>
+
+            <!-- Alert Messages -->
+            <div id="alertMessage" class="alert" style="display: none;"></div>
+
+            <!-- Edit Profile Form -->
+            <div class="content-section">
+                <form id="editProfileForm" onsubmit="saveCompanyProfile(event)">
+                    <div class="form-grid">
+                        <!-- Company Name -->
+                        <div class="form-group form-group-full">
+                            <label for="companyName">
+                                <i class="fas fa-building"></i>
+                                Company Name *
+                            </label>
+                            <input 
+                                type="text" 
+                                id="companyName" 
+                                name="companyName" 
+                                required
+                                placeholder="Enter your company name"
+                            >
+                        </div>
+
+                        <!-- Industry -->
+                        <div class="form-group">
+                            <label for="industry">
+                                <i class="fas fa-industry"></i>
+                                Industry *
+                            </label>
+                            <select id="industry" name="industry" required>
+                                <option value="">Select Industry</option>
+                                <option value="Technology">Technology</option>
+                                <option value="Finance">Finance</option>
+                                <option value="Healthcare">Healthcare</option>
+                                <option value="Education">Education</option>
+                                <option value="Manufacturing">Manufacturing</option>
+                                <option value="Retail">Retail</option>
+                                <option value="Consulting">Consulting</option>
+                                <option value="Media & Communications">Media & Communications</option>
+                                <option value="Real Estate">Real Estate</option>
+                                <option value="Transportation">Transportation</option>
+                                <option value="Energy">Energy</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+
+                        <!-- Company Size -->
+                        <div class="form-group">
+                            <label for="companySize">
+                                <i class="fas fa-users"></i>
+                                Company Size
+                            </label>
+                            <select id="companySize" name="companySize">
+                                <option value="">Select Size</option>
+                                <option value="1-10">1-10 employees</option>
+                                <option value="11-50">11-50 employees</option>
+                                <option value="51-200">51-200 employees</option>
+                                <option value="201-500">201-500 employees</option>
+                                <option value="501-1000">501-1000 employees</option>
+                                <option value="1000+">1000+ employees</option>
+                            </select>
+                        </div>
+
+                        <!-- Location -->
+                        <div class="form-group">
+                            <label for="location">
+                                <i class="fas fa-map-marker-alt"></i>
+                                Location *
+                            </label>
+                            <input 
+                                type="text" 
+                                id="location" 
+                                name="location" 
+                                required
+                                placeholder="City, Country"
+                            >
+                        </div>
+
+                        <!-- Phone -->
+                        <div class="form-group">
+                            <label for="phoneNumber">
+                                <i class="fas fa-phone"></i>
+                                Phone Number
+                            </label>
+                            <input 
+                                type="tel" 
+                                id="phoneNumber" 
+                                name="phoneNumber" 
+                                placeholder="+970 XX XXX XXXX"
+                            >
+                        </div>
+
+                        <!-- Website -->
+                        <div class="form-group">
+                            <label for="website">
+                                <i class="fas fa-globe"></i>
+                                Website
+                            </label>
+                            <input 
+                                type="url" 
+                                id="website" 
+                                name="website" 
+                                placeholder="https://www.example.com"
+                            >
+                        </div>
+
+                        <!-- Description -->
+                        <div class="form-group form-group-full">
+                            <label for="description">
+                                <i class="fas fa-align-left"></i>
+                                Company Description
+                            </label>
+                            <textarea 
+                                id="description" 
+                                name="description" 
+                                rows="6"
+                                placeholder="Describe your company, its mission, values, and what makes it unique..."
+                            ></textarea>
+                        </div>
+
+                        <!-- Contact Person Section -->
+                        <div class="form-group form-group-full">
+                            <h3 style="margin: 2rem 0 1rem 0; padding-bottom: 0.5rem; border-bottom: 2px solid var(--primary-color);">
+                                <i class="fas fa-user-tie"></i> Contact Person
+                            </h3>
+                        </div>
+
+                        <!-- Contact Person Name -->
+                        <div class="form-group">
+                            <label for="contactName">
+                                <i class="fas fa-user"></i>
+                                Contact Person Name
+                            </label>
+                            <input 
+                                type="text" 
+                                id="contactName" 
+                                name="contactName" 
+                                placeholder="Full name"
+                            >
+                        </div>
+
+                        <!-- Contact Person Position -->
+                        <div class="form-group">
+                            <label for="contactPosition">
+                                <i class="fas fa-briefcase"></i>
+                                Position
+                            </label>
+                            <input 
+                                type="text" 
+                                id="contactPosition" 
+                                name="contactPosition" 
+                                placeholder="e.g., HR Manager"
+                            >
+                        </div>
+
+                        <!-- Contact Person Email -->
+                        <div class="form-group">
+                            <label for="contactEmail">
+                                <i class="fas fa-envelope"></i>
+                                Contact Email
+                            </label>
+                            <input 
+                                type="email" 
+                                id="contactEmail" 
+                                name="contactEmail" 
+                                placeholder="contact@company.com"
+                            >
+                        </div>
+
+                        <!-- Contact Person Phone -->
+                        <div class="form-group">
+                            <label for="contactPhone">
+                                <i class="fas fa-phone"></i>
+                                Contact Phone
+                            </label>
+                            <input 
+                                type="tel" 
+                                id="contactPhone" 
+                                name="contactPhone" 
+                                placeholder="+970 XX XXX XXXX"
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--border-color);">
+                        <a href="profile.html" class="btn btn-outline">
+                            <i class="fas fa-times"></i>
+                            Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i>
+                            Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <!-- JavaScript Files -->
+    <script src="../../js/config.js"></script>
+    <script src="../../js/auth.js"></script>
+    <script src="../../js/api.js"></script>
+    <script src="../../js/notifications-handler.js"></script>
+    <script src="../../js/global-actions.js"></script>
+    <script src="../../js/company-edit-profile.js"></script>
+</body>
+</html>
+
