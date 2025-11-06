@@ -136,6 +136,59 @@ async function updateReports() {
     showAlert('Reports updated successfully!', 'success');
 }
 
-function exportReport() {
-    showAlert('Export functionality coming soon!', 'info');
+async function exportReport() {
+    // Show export options modal
+    const format = prompt('Select export format:\n1. CSV\n2. PDF\n\nEnter 1 or 2:');
+
+    if (!format || (format !== '1' && format !== '2')) {
+        return;
+    }
+
+    const formatType = format === '1' ? 'csv' : 'pdf';
+    const exportType = prompt('What data to export?\n1. Users\n2. Internships\n3. Applications\n4. All Data\n\nEnter 1-4:');
+
+    if (!exportType || !['1', '2', '3', '4'].includes(exportType)) {
+        return;
+    }
+
+    const typeMap = {
+        '1': 'users',
+        '2': 'internships',
+        '3': 'applications',
+        '4': 'all'
+    };
+
+    const dataType = typeMap[exportType];
+
+    try {
+        showAlert(`Exporting ${dataType} data as ${formatType.toUpperCase()}...`, 'info');
+
+        const response = await apiRequest(`/admin/export/${dataType}?format=${formatType}`, {
+            method: 'GET'
+        });
+
+        if (response.success) {
+            // Create download link
+            const blob = new Blob([response.data], {
+                type: formatType === 'csv' ? 'text/csv' : 'application/pdf'
+            });
+
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `trainup_${dataType}_${new Date().toISOString().split('T')[0]}.${formatType}`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+
+            showAlert('Export completed successfully!', 'success');
+        } else {
+            throw new Error('Export failed');
+        }
+
+    } catch (error) {
+        console.error('Error exporting data:', error);
+        showAlert('Export functionality requires backend implementation', 'info');
+    }
 }

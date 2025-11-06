@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluate Company - TrainUp</title>
+
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        .rating-container {
+            margin: 1.5rem 0;
+        }
+
+        .rating-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            margin-bottom: 1rem;
+        }
+
+        .rating-label {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .rating-stars {
+            display: flex;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+
+        .rating-stars i {
+            font-size: 1.5rem;
+            color: var(--border-color);
+            transition: all 0.2s ease;
+        }
+
+        .rating-stars i.active,
+        .rating-stars i:hover,
+        .rating-stars i:hover ~ i {
+            color: #FCD34D;
+        }
+
+        .rating-value {
+            min-width: 60px;
+            text-align: center;
+            font-weight: 700;
+            color: var(--primary-color);
+            font-size: 1.25rem;
+        }
+
+        .evaluation-summary {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: var(--radius-lg);
+            margin-bottom: 2rem;
+        }
+
+        .company-info-card {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: var(--radius-md);
+            margin-bottom: 2rem;
+        }
+
+        .recommendation-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .recommendation-btn {
+            flex: 1;
+            padding: 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-md);
+            background: var(--bg-primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .recommendation-btn:hover {
+            border-color: var(--primary-color);
+            background: rgba(79, 70, 229, 0.05);
+        }
+
+        .recommendation-btn.active {
+            border-color: var(--primary-color);
+            background: rgba(79, 70, 229, 0.1);
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .recommendation-btn i {
+            font-size: 2rem;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <i class="fas fa-graduation-cap"></i>
+                    TrainUp
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="internships.html" class="nav-item">
+                    <i class="fas fa-briefcase"></i>
+                    <span>Internships</span>
+                </a>
+                <a href="my-applications.html" class="nav-item">
+                    <i class="fas fa-file-alt"></i>
+                    <span>My Applications</span>
+                </a>
+                <a href="evaluations.html" class="nav-item active">
+                    <i class="fas fa-star"></i>
+                    <span>Evaluations</span>
+                </a>
+                <a href="notifications.html" class="nav-item">
+                    <i class="fas fa-bell"></i>
+                    <span>Notifications</span>
+                </a>
+                <a href="profile.html" class="nav-item">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+                <a href="#" class="nav-item" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-avatar" id="userAvatar">S</div>
+                    <div class="user-info">
+                        <h4 id="userName">Student</h4>
+                        <p id="userEmail">student@example.com</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Back Button -->
+            <div style="margin-bottom: 1rem;">
+                <a href="evaluations.html" class="btn btn-outline btn-sm">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Evaluations
+                </a>
+            </div>
+
+            <div class="page-header">
+                <div>
+                    <h1>Evaluate Company Experience</h1>
+                    <p>Share your internship experience to help other students</p>
+                </div>
+            </div>
+
+            <!-- Alert Messages -->
+            <div id="alertMessage" class="alert" style="display: none;"></div>
+
+            <!-- Loading State -->
+            <div id="loadingState" class="empty-state">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Loading company details...</p>
+            </div>
+
+            <!-- Evaluation Form -->
+            <div id="evaluationForm" style="display: none;">
+                <!-- Company Info Card -->
+                <div class="company-info-card" id="companyInfo">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+
+                <form id="evaluationFormElement">
+                    <!-- Overall Rating Summary -->
+                    <div class="evaluation-summary">
+                        <div style="text-align: center;">
+                            <h2 style="color: white; margin-bottom: 0.5rem;">Overall Experience</h2>
+                            <div id="overallRatingDisplay" style="font-size: 3rem; margin: 1rem 0;">-</div>
+                            <div style="display: flex; justify-content: center; gap: 0.5rem; font-size: 2rem;">
+                                <i class="far fa-star" data-rating="overall" data-value="1"></i>
+                                <i class="far fa-star" data-rating="overall" data-value="2"></i>
+                                <i class="far fa-star" data-rating="overall" data-value="3"></i>
+                                <i class="far fa-star" data-rating="overall" data-value="4"></i>
+                                <i class="far fa-star" data-rating="overall" data-value="5"></i>
+                            </div>
+                            <p style="opacity: 0.9; margin-top: 1rem; font-size: 0.875rem;">Click stars to rate your overall experience</p>
+                        </div>
+                    </div>
+
+                    <!-- Detailed Ratings -->
+                    <div class="content-section">
+                        <h2 style="margin-bottom: 1.5rem;">
+                            <i class="fas fa-chart-bar"></i>
+                            Experience Criteria
+                        </h2>
+
+                        <div class="rating-container">
+                            <!-- Work Environment -->
+                            <div class="rating-item">
+                                <div>
+                                    <div class="rating-label">
+                                        <i class="fas fa-building"></i> Work Environment
+                                    </div>
+                                    <small style="color: var(--text-secondary);">Office culture, facilities, and working conditions</small>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 1rem;">
+                                    <div class="rating-stars" data-rating="workEnvironment">
+                                        <i class="far fa-star" data-value="1"></i>
+                                        <i class="far fa-star" data-value="2"></i>
+                                        <i class="far fa-star" data-value="3"></i>
+                                        <i class="far fa-star" data-value="4"></i>
+                                        <i class="far fa-star" data-value="5"></i>
+                                    </div>
+                                    <div class="rating-value" id="workEnvironmentValue">-</div>
+                                </div>
+                            </div>
+
+                            <!-- Mentorship & Guidance -->
+                            <div class="rating-item">
+                                <div>
+                                    <div class="rating-label">
+                                        <i class="fas fa-chalkboard-teacher"></i> Mentorship & Guidance
+                                    </div>
+                                    <small style="color: var(--text-secondary);">Quality of supervision and professional guidance</small>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 1rem;">
+                                    <div class="rating-stars" data-rating="mentorship">
+                                        <i class="far fa-star" data-value="1"></i>
+                                        <i class="far fa-star" data-value="2"></i>
+                                        <i class="far fa-star" data-value="3"></i>
+                                        <i class="far fa-star" data-value="4"></i>
+                                        <i class="far fa-star" data-value="5"></i>
+                                    </div>
+                                    <div class="rating-value" id="mentorshipValue">-</div>
+                                </div>
+                            </div>
+
+                            <!-- Learning Opportunities -->
+                            <div class="rating-item">
+                                <div>
+                                    <div class="rating-label">
+                                        <i class="fas fa-book-reader"></i> Learning Opportunities
+                                    </div>
+                                    <small style="color: var(--text-secondary);">Skill development and training provided</small>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 1rem;">
+                                    <div class="rating-stars" data-rating="learningOpportunities">
+                                        <i class="far fa-star" data-value="1"></i>
+                                        <i class="far fa-star" data-value="2"></i>
+                                        <i class="far fa-star" data-value="3"></i>
+                                        <i class="far fa-star" data-value="4"></i>
+                                        <i class="far fa-star" data-value="5"></i>
+                                    </div>
+                                    <div class="rating-value" id="learningOpportunitiesValue">-</div>
+                                </div>
+                            </div>
+
+                            <!-- Company Culture -->
+                            <div class="rating-item">
+                                <div>
+                                    <div class="rating-label">
+                                        <i class="fas fa-users"></i> Company Culture
+                                    </div>
+                                    <small style="color: var(--text-secondary);">Team dynamics and organizational values</small>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 1rem;">
+                                    <div class="rating-stars" data-rating="companyCulture">
+                                        <i class="far fa-star" data-value="1"></i>
+                                        <i class="far fa-star" data-value="2"></i>
+                                        <i class="far fa-star" data-value="3"></i>
+                                        <i class="far fa-star" data-value="4"></i>
+                                        <i class="far fa-star" data-value="5"></i>
+                                    </div>
+                                    <div class="rating-value" id="companyCultureValue">-</div>
+                                </div>
+                            </div>
+
+                            <!-- Organization & Management -->
+                            <div class="rating-item">
+                                <div>
+                                    <div class="rating-label">
+                                        <i class="fas fa-sitemap"></i> Organization & Management
+                                    </div>
+                                    <small style="color: var(--text-secondary);">Structure, communication, and project management</small>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 1rem;">
+                                    <div class="rating-stars" data-rating="organization">
+                                        <i class="far fa-star" data-value="1"></i>
+                                        <i class="far fa-star" data-value="2"></i>
+                                        <i class="far fa-star" data-value="3"></i>
+                                        <i class="far fa-star" data-value="4"></i>
+                                        <i class="far fa-star" data-value="5"></i>
+                                    </div>
+                                    <div class="rating-value" id="organizationValue">-</div>
+                                </div>
+                            </div>
+
+                            <!-- Career Growth -->
+                            <div class="rating-item">
+                                <div>
+                                    <div class="rating-label">
+                                        <i class="fas fa-chart-line"></i> Career Growth Potential
+                                    </div>
+                                    <small style="color: var(--text-secondary);">Opportunities for career development</small>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 1rem;">
+                                    <div class="rating-stars" data-rating="careerGrowth">
+                                        <i class="far fa-star" data-value="1"></i>
+                                        <i class="far fa-star" data-value="2"></i>
+                                        <i class="far fa-star" data-value="3"></i>
+                                        <i class="far fa-star" data-value="4"></i>
+                                        <i class="far fa-star" data-value="5"></i>
+                                    </div>
+                                    <div class="rating-value" id="careerGrowthValue">-</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Feedback Section -->
+                    <div class="content-section">
+                        <h2 style="margin-bottom: 1.5rem;">
+                            <i class="fas fa-comment-alt"></i>
+                            Detailed Feedback
+                        </h2>
+
+                        <div class="form-group">
+                            <label for="positiveAspects">
+                                <i class="fas fa-thumbs-up"></i>
+                                Positive Aspects
+                            </label>
+                            <textarea
+                                id="positiveAspects"
+                                rows="4"
+                                placeholder="What did you like most about your internship experience with this company?"
+                            ></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="areasForImprovement">
+                                <i class="fas fa-chart-line"></i>
+                                Areas for Improvement
+                            </label>
+                            <textarea
+                                id="areasForImprovement"
+                                rows="4"
+                                placeholder="What could the company improve to provide a better internship experience?"
+                            ></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="overallComments">
+                                <i class="fas fa-edit"></i>
+                                Overall Comments *
+                            </label>
+                            <textarea
+                                id="overallComments"
+                                rows="6"
+                                placeholder="Share your overall internship experience and any advice for future interns..."
+                                required
+                            ></textarea>
+                            <span class="error-message" id="overallCommentsError"></span>
+                        </div>
+                    </div>
+
+                    <!-- Experience Highlights -->
+                    <div class="content-section">
+                        <h2 style="margin-bottom: 1.5rem;">
+                            <i class="fas fa-trophy"></i>
+                            Your Experience
+                        </h2>
+
+                        <div class="form-group">
+                            <label for="keyLearnings">
+                                <i class="fas fa-lightbulb"></i>
+                                Key Learnings
+                            </label>
+                            <textarea
+                                id="keyLearnings"
+                                rows="4"
+                                placeholder="What are the most important things you learned during this internship?"
+                            ></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="projectsWorkedOn">
+                                <i class="fas fa-tasks"></i>
+                                Projects You Worked On
+                            </label>
+                            <textarea
+                                id="projectsWorkedOn"
+                                rows="3"
+                                placeholder="Briefly describe the main projects or tasks you worked on..."
+                            ></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Recommendation -->
+                    <div class="content-section">
+                        <h2 style="margin-bottom: 1.5rem;">
+                            <i class="fas fa-handshake"></i>
+                            Recommendation
+                        </h2>
+
+                        <label style="margin-bottom: 1rem; display: block;">
+                            Would you recommend this company to other students?
+                        </label>
+
+                        <div class="recommendation-buttons">
+                            <div class="recommendation-btn" onclick="setRecommendation(true)">
+                                <i class="fas fa-check-circle"></i>
+                                <div>Yes, I Recommend</div>
+                            </div>
+                            <div class="recommendation-btn" onclick="setRecommendation(false)">
+                                <i class="fas fa-times-circle"></i>
+                                <div>No, I Don't Recommend</div>
+                            </div>
+                        </div>
+
+                        <input type="hidden" id="wouldRecommend" required>
+                        <span class="error-message" id="wouldRecommendError"></span>
+
+                        <div class="form-group" style="margin-top: 1.5rem;">
+                            <label for="recommendationReason">
+                                <i class="fas fa-comment-dots"></i>
+                                Why? (Optional)
+                            </label>
+                            <textarea
+                                id="recommendationReason"
+                                rows="3"
+                                placeholder="Explain your recommendation..."
+                            ></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Future Opportunities -->
+                    <div class="content-section">
+                        <h2 style="margin-bottom: 1.5rem;">
+                            <i class="fas fa-rocket"></i>
+                            Future Opportunities
+                        </h2>
+
+                        <label class="checkbox-label" style="padding: 1rem; background: var(--bg-secondary); border-radius: var(--radius-md); cursor: pointer;">
+                            <input type="checkbox" id="interestedInFullTime">
+                            <span>I would be interested in working full-time at this company</span>
+                        </label>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem; padding-top: 2rem; border-top: 2px solid var(--border-color);">
+                        <a href="evaluations.html" class="btn btn-outline">
+                            <i class="fas fa-times"></i>
+                            Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary" id="submitBtn">
+                            <span id="submitBtnText">
+                                <i class="fas fa-paper-plane"></i>
+                                Submit Evaluation
+                            </span>
+                            <span id="submitBtnLoader" class="loader" style="display: none;"></span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <!-- JavaScript Files -->
+    <script src="../../js/config.js"></script>
+    <script src="../../js/auth.js"></script>
+    <script src="../../js/api.js"></script>
+    <script src="../../js/notifications-handler.js"></script>
+    <script src="../../js/evaluate-company.js"></script>
+</body>
+</html>

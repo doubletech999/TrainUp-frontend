@@ -154,11 +154,22 @@
     gap: 0.5rem;
     cursor: pointer;
     font-weight: normal;
+    margin-bottom: 0;
+    text-transform: none;
+    letter-spacing: normal;
+    font-size: 0.9375rem;
+    color: var(--text-secondary);
 }
 
 .checkbox-label input[type="checkbox"] {
     width: auto;
     cursor: pointer;
+    margin-right: 0.5rem;
+}
+
+.checkbox-label span {
+    color: var(--text-secondary);
+    font-size: 0.9375rem;
 }
 
 .forgot-password {

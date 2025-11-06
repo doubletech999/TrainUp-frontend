@@ -38,23 +38,33 @@
         
         .user-type-card.active {
             border-color: var(--primary-color);
-            background: rgba(79, 70, 229, 0.05);
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
         }
-        
+
         .user-type-card i {
             font-size: 2.5rem;
             color: var(--primary-color);
             margin-bottom: 0.5rem;
         }
-        
+
         .user-type-card h3 {
             font-size: 1.125rem;
             margin-bottom: 0.25rem;
+            color: var(--text-primary);
+            font-weight: 600;
         }
-        
+
         .user-type-card p {
             font-size: 0.875rem;
             color: var(--text-secondary);
+        }
+
+        .user-type-card.active h3 {
+            color: var(--primary-color);
+        }
+
+        .user-type-card.active p {
+            color: var(--text-primary);
         }
         
         .profile-section {

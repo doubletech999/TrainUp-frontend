@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Approve Internship Completion - TrainUp</title>
+
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        .completion-card {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: var(--radius-md);
+            margin-bottom: 1.5rem;
+        }
+
+        .progress-timeline {
+            position: relative;
+            padding: 1.5rem 0;
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .timeline-item:not(:last-child)::before {
+            content: '';
+            position: absolute;
+            left: 19px;
+            top: 40px;
+            width: 2px;
+            height: calc(100% - 20px);
+            background: var(--border-color);
+        }
+
+        .timeline-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--primary-color);
+            color: white;
+            flex-shrink: 0;
+            z-index: 1;
+        }
+
+        .timeline-icon.completed {
+            background: var(--success-color);
+        }
+
+        .timeline-icon.pending {
+            background: var(--border-color);
+        }
+
+        .timeline-content {
+            flex: 1;
+            padding-top: 0.5rem;
+        }
+
+        .approval-section {
+            background: var(--bg-primary);
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: start;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .checklist-item:hover {
+            background: var(--primary-light);
+        }
+
+        .checklist-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            margin-top: 0.25rem;
+        }
+
+        .checklist-item.checked {
+            background: #D1FAE5;
+            border-left: 4px solid var(--success-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <i class="fas fa-graduation-cap"></i>
+                    TrainUp
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="companies.html" class="nav-item">
+                    <i class="fas fa-building"></i>
+                    <span>Verify Companies</span>
+                </a>
+                <a href="internships.html" class="nav-item">
+                    <i class="fas fa-briefcase"></i>
+                    <span>Review Internships</span>
+                </a>
+                <a href="students.html" class="nav-item active">
+                    <i class="fas fa-user-graduate"></i>
+                    <span>Monitor Students</span>
+                </a>
+                <a href="profile.html" class="nav-item">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+                <a href="#" class="nav-item" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-avatar" id="userAvatar">S</div>
+                    <div class="user-info">
+                        <h4 id="supervisorName">Supervisor</h4>
+                        <p id="userEmail">supervisor@example.com</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Back Button -->
+            <div style="margin-bottom: 1rem;">
+                <a href="students.html" class="btn btn-outline btn-sm">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Students
+                </a>
+            </div>
+
+            <div class="page-header">
+                <h1>Approve Internship Completion</h1>
+                <p>Review and approve student's internship completion</p>
+            </div>
+
+            <!-- Alert Messages -->
+            <div id="alertMessage" class="alert" style="display: none;"></div>
+
+            <!-- Loading State -->
+            <div id="loadingState" class="empty-state">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Loading internship details...</p>
+            </div>
+
+            <!-- Completion Review Content -->
+            <div id="completionContent" style="display: none;">
+                <!-- Student & Internship Info -->
+                <div class="completion-card" id="studentInfo">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+
+                <!-- Progress Timeline -->
+                <div class="content-section">
+                    <h2 style="margin-bottom: 1.5rem;">
+                        <i class="fas fa-tasks"></i>
+                        Internship Progress
+                    </h2>
+
+                    <div class="progress-timeline" id="progressTimeline">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Completion Checklist -->
+                <div class="content-section">
+                    <h2 style="margin-bottom: 1.5rem;">
+                        <i class="fas fa-clipboard-check"></i>
+                        Completion Requirements
+                    </h2>
+
+                    <div id="completionChecklist">
+                        <div class="checklist-item" onclick="toggleCheckbox('req1')">
+                            <input type="checkbox" id="req1" onclick="event.stopPropagation()">
+                            <div>
+                                <strong>Completed Required Duration</strong>
+                                <p style="color: var(--text-secondary); font-size: 0.875rem; margin-top: 0.25rem;">
+                                    Student has completed the full internship duration
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="checklist-item" onclick="toggleCheckbox('req2')">
+                            <input type="checkbox" id="req2" onclick="event.stopPropagation()">
+                            <div>
+                                <strong>Submitted Required Reports</strong>
+                                <p style="color: var(--text-secondary); font-size: 0.875rem; margin-top: 0.25rem;">
+                                    All required reports and documentation have been submitted
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="checklist-item" onclick="toggleCheckbox('req3')">
+                            <input type="checkbox" id="req3" onclick="event.stopPropagation()">
+                            <div>
+                                <strong>Company Evaluation Received</strong>
+                                <p style="color: var(--text-secondary); font-size: 0.875rem; margin-top: 0.25rem;">
+                                    Company has provided evaluation for the student
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="checklist-item" onclick="toggleCheckbox('req4')">
+                            <input type="checkbox" id="req4" onclick="event.stopPropagation()">
+                            <div>
+                                <strong>Attendance Requirements Met</strong>
+                                <p style="color: var(--text-secondary); font-size: 0.875rem; margin-top: 0.25rem;">
+                                    Student met minimum attendance requirements
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="checklist-item" onclick="toggleCheckbox('req5')">
+                            <input type="checkbox" id="req5" onclick="event.stopPropagation()">
+                            <div>
+                                <strong>Learning Objectives Achieved</strong>
+                                <p style="color: var(--text-secondary); font-size: 0.875rem; margin-top: 0.25rem;">
+                                    Student has achieved the internship learning objectives
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Company Evaluation Summary -->
+                <div class="content-section" id="companyEvaluationSection" style="display: none;">
+                    <h2 style="margin-bottom: 1.5rem;">
+                        <i class="fas fa-star"></i>
+                        Company Evaluation
+                    </h2>
+                    <div id="companyEvaluation">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Supervisor's Final Assessment -->
+                <form id="approvalForm">
+                    <div class="approval-section">
+                        <h2 style="margin-bottom: 1.5rem;">
+                            <i class="fas fa-clipboard-check"></i>
+                            Final Assessment
+                        </h2>
+
+                        <div class="form-group">
+                            <label for="supervisorComments">
+                                <i class="fas fa-comment-alt"></i>
+                                Supervisor Comments *
+                            </label>
+                            <textarea
+                                id="supervisorComments"
+                                rows="6"
+                                placeholder="Provide your assessment of the student's internship performance and completion..."
+                                required
+                            ></textarea>
+                            <span class="error-message" id="supervisorCommentsError"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="grade">
+                                <i class="fas fa-graduation-cap"></i>
+                                Final Grade (Optional)
+                            </label>
+                            <select id="grade">
+                                <option value="">Select Grade</option>
+                                <option value="A+">A+ (Excellent)</option>
+                                <option value="A">A (Very Good)</option>
+                                <option value="B+">B+ (Good)</option>
+                                <option value="B">B (Above Average)</option>
+                                <option value="C+">C+ (Average)</option>
+                                <option value="C">C (Satisfactory)</option>
+                                <option value="D">D (Pass)</option>
+                                <option value="F">F (Fail)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="recommendations">
+                                <i class="fas fa-lightbulb"></i>
+                                Recommendations for Student
+                            </label>
+                            <textarea
+                                id="recommendations"
+                                rows="4"
+                                placeholder="Any recommendations or advice for the student's future career development..."
+                            ></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="checkbox-label" style="padding: 1rem; background: var(--bg-secondary); border-radius: var(--radius-md); cursor: pointer;">
+                                <input type="checkbox" id="certifyCompletion" required>
+                                <span>
+                                    I certify that the student has successfully completed all internship requirements
+                                    and approve the completion of this internship
+                                </span>
+                            </label>
+                            <span class="error-message" id="certifyCompletionError"></span>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem; padding-top: 2rem; border-top: 2px solid var(--border-color);">
+                            <a href="students.html" class="btn btn-outline">
+                                <i class="fas fa-times"></i>
+                                Cancel
+                            </a>
+                            <button type="button" class="btn btn-outline" onclick="rejectCompletion()" style="border-color: var(--danger-color); color: var(--danger-color);">
+                                <i class="fas fa-times-circle"></i>
+                                Reject Completion
+                            </button>
+                            <button type="submit" class="btn btn-primary" id="submitBtn">
+                                <span id="submitBtnText">
+                                    <i class="fas fa-check-circle"></i>
+                                    Approve Completion
+                                </span>
+                                <span id="submitBtnLoader" class="loader" style="display: none;"></span>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <!-- JavaScript Files -->
+    <script src="../../js/config.js"></script>
+    <script src="../../js/auth.js"></script>
+    <script src="../../js/api.js"></script>
+    <script src="../../js/notifications-handler.js"></script>
+    <script src="../../js/approve-completion.js"></script>
+</body>
+</html>
