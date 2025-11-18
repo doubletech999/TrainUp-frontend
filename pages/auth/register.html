@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - TrainUp</title>
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/auth.css">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        .user-type-selector {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            margin-bottom: 2rem;
+        }
+        
+        .user-type-card {
+            padding: 1.5rem 2rem;
+            border: 2px solid #E5E7EB;
+            border-radius: 16px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: #FFFFFF;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 1.5rem;
+            width: 100%;
+        }
+        
+        .user-type-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.05) 0%, rgba(30, 64, 175, 0.02) 100%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        
+        .user-type-card:hover {
+            border-color: #2563EB;
+            transform: translateY(-6px);
+            box-shadow: 0 12px 24px rgba(37, 99, 235, 0.15);
+            background: rgba(255, 255, 255, 0.98);
+        }
+        
+        .user-type-card:hover::before {
+            opacity: 1;
+        }
+        
+        .user-type-card.active {
+            border-color: #2563EB;
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.08) 0%, rgba(30, 64, 175, 0.05) 100%);
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .user-type-card.active::before {
+            opacity: 1;
+        }
+
+        .user-type-card i {
+            font-size: 2rem;
+            width: 64px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(30, 64, 175, 0.08) 100%);
+            border-radius: 50%;
+            color: #2563EB;
+            transition: all 0.4s ease;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+            flex-shrink: 0;
+        }
+        
+        .user-type-card:hover i {
+            transform: scale(1.1);
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.15) 0%, rgba(30, 64, 175, 0.12) 100%);
+            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.25);
+            color: #1D4ED8;
+        }
+        
+        .user-type-card.active i {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.2) 0%, rgba(30, 64, 175, 0.15) 100%);
+            color: #1D4ED8;
+            box-shadow: 0 6px 18px rgba(37, 99, 235, 0.3);
+            transform: scale(1.05);
+        }
+
+        .user-type-card-content {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            flex: 1;
+        }
+
+        .user-type-card h3 {
+            font-size: 1.125rem;
+            margin: 0;
+            color: #1F2937;
+            font-weight: 600;
+            position: relative;
+            z-index: 1;
+            transition: color 0.3s ease;
+        }
+
+        .user-type-card p {
+            font-size: 0.875rem;
+            color: #6B7280;
+            margin: 0;
+            line-height: 1.5;
+            position: relative;
+            z-index: 1;
+            transition: color 0.3s ease;
+        }
+
+        .user-type-card:hover h3 {
+            color: #2563EB;
+        }
+        
+        .user-type-card:hover p {
+            color: #4B5563;
+        }
+
+        .user-type-card.active h3 {
+            color: #2563EB;
+        }
+
+        .user-type-card.active p {
+            color: #374151;
+        }
+        
+        .profile-section {
+            display: none;
+        }
+        
+        .profile-section.active {
+            display: block;
+        }
+        
+        @media (max-width: 768px) {
+            .user-type-card {
+                padding: 1.25rem 1.5rem;
+            }
+            
+            .user-type-card i {
+                width: 56px;
+                height: 56px;
+                font-size: 1.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <!-- Left Side - Branding -->
+        <div class="auth-branding">
+            <div class="branding-content">
+                <h1 class="logo">
+                    <i class="fas fa-graduation-cap"></i>
+                    TrainUp
+                </h1>
+                <p class="tagline">Empowering Internships for the Future</p>
+                
+                <div class="features">
+                    <div class="feature">
+                        <i class="fas fa-user-graduate"></i>
+                        <span>Students: Find Your Perfect Internship</span>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-building"></i>
+                        <span>Companies: Hire Talented Interns</span>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-user-tie"></i>
+                        <span>Supervisors: Monitor & Guide</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Side - Register Form -->
+        <div class="auth-form-container">
+            <div class="auth-form-wrapper">
+                <h2>Create Account</h2>
+                <p class="subtitle">Join TrainUp and start your journey</p>
+
+                <!-- Alert Messages -->
+                <div id="alertMessage" class="alert" style="display: none;"></div>
+
+                <!-- Register Form -->
+                <form id="registerForm" class="auth-form">
+                    <!-- Step 1: Choose User Type -->
+                    <div id="step1" class="form-step">
+                        <label style="margin-bottom: 1rem; display: block; text-align: center; color: #2563EB; font-weight: 600;">
+                            <i class="fas fa-users"></i>
+                            I am a...
+                        </label>
+                        
+                        <div class="user-type-selector">
+                            <div class="user-type-card" onclick="selectUserType('STUDENT')">
+                                <i class="fas fa-user-graduate"></i>
+                                <h3>Student</h3>
+                                <p>Looking for internships</p>
+                            </div>
+
+                            <div class="user-type-card" onclick="selectUserType('COMPANY')">
+                                <i class="fas fa-building"></i>
+                                <h3>Company</h3>
+                                <p>Hiring interns</p>
+                            </div>
+
+                            <div class="user-type-card" onclick="selectUserType('SUPERVISOR')">
+                                <i class="fas fa-user-tie"></i>
+                                <h3>Supervisor</h3>
+                                <p>Academic supervision</p>
+                            </div>
+                        </div>
+                        
+                        <input type="hidden" id="userType" name="userType" required>
+                        <span class="error-message" id="userTypeError"></span>
+                    </div>
+
+                    <!-- Step 2: Email & Password -->
+                    <div id="step2" class="form-step" style="display: none;">
+                        <!-- Email Field -->
+                        <div class="form-group">
+                            <label for="email">
+                                <i class="fas fa-envelope"></i>
+                                Email Address *
+                            </label>
+                            <input 
+                                type="email" 
+                                id="email" 
+                                name="email" 
+                                placeholder="Enter your email"
+                                required
+                            >
+                            <span class="error-message" id="emailError"></span>
+                        </div>
+
+                        <!-- Password Field -->
+                        <div class="form-group">
+                            <label for="password">
+                                <i class="fas fa-lock"></i>
+                                Password *
+                            </label>
+                            <div class="password-input">
+                                <input 
+                                    type="password" 
+                                    id="password" 
+                                    name="password" 
+                                    placeholder="Create a password (min 6 characters)"
+                                    required
+                                >
+                                <button type="button" class="toggle-password" onclick="togglePassword()">
+                                    <i class="fas fa-eye" id="toggleIcon"></i>
+                                </button>
+                            </div>
+                            <span class="error-message" id="passwordError"></span>
+                        </div>
+
+                        <!-- Confirm Password -->
+                        <div class="form-group">
+                            <label for="confirmPassword">
+                                <i class="fas fa-lock"></i>
+                                Confirm Password *
+                            </label>
+                            <input 
+                                type="password" 
+                                id="confirmPassword" 
+                                name="confirmPassword" 
+                                placeholder="Confirm your password"
+                                required
+                            >
+                            <span class="error-message" id="confirmPasswordError"></span>
+                        </div>
+
+                        <div style="display: flex; gap: 1rem;">
+                            <button type="button" class="btn btn-outline" onclick="goToStep(1)" style="flex: 1;">
+                                <i class="fas fa-arrow-left"></i>
+                                Back
+                            </button>
+                            <button type="button" class="btn btn-primary" onclick="goToStep(3)" style="flex: 2;">
+                                Next
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Profile Information -->
+                    <div id="step3" class="form-step" style="display: none;">
+                        <!-- Student Profile -->
+                        <div id="studentProfile" class="profile-section">
+                            <div class="form-group">
+                                <label for="firstName">
+                                    <i class="fas fa-user"></i>
+                                    First Name *
+                                </label>
+                                <input type="text" id="firstName" placeholder="Enter your first name">
+                                <span class="error-message" id="firstNameError"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="lastName">
+                                    <i class="fas fa-user"></i>
+                                    Last Name *
+                                </label>
+                                <input type="text" id="lastName" placeholder="Enter your last name">
+                                <span class="error-message" id="lastNameError"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="studentId">
+                                    <i class="fas fa-id-card"></i>
+                                    Student ID *
+                                </label>
+                                <input type="text" id="studentId" placeholder="e.g., 2211024">
+                                <span class="error-message" id="studentIdError"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="university">
+                                    <i class="fas fa-university"></i>
+                                    University *
+                                </label>
+                                <input type="text" id="university" placeholder="e.g., An-Najah University">
+                                <span class="error-message" id="universityError"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="major">
+                                    <i class="fas fa-graduation-cap"></i>
+                                    Major *
+                                </label>
+                                <input type="text" id="major" placeholder="e.g., Computer Science">
+                                <span class="error-message" id="majorError"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="yearOfStudy">
+                                    <i class="fas fa-calendar"></i>
+                                    Year of Study
+                                </label>
+                                <select id="yearOfStudy">
+                                    <option value="">Select Year</option>
+                                    <option value="1">Year 1</option>
+                                    <option value="2">Year 2</option>
+                                    <option value="3">Year 3</option>
+                                    <option value="4">Year 4</option>
+                                    <option value="5">Year 5+</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="studentPhone">
+                                    <i class="fas fa-phone"></i>
+                                    Phone Number
+                                </label>
+                                <input type="tel" id="studentPhone" placeholder="+970599123456">
+                            </div>
+                        </div>
+
+                        <!-- Company Profile -->
+                        <div id="companyProfile" class="profile-section">
+                            <div class="form-group">
+                                <label for="companyName">
+                                    <i class="fas fa-building"></i>
+                                    Company Name *
+                                </label>
+                                <input type="text" id="companyName" placeholder="Enter company name">
+                                <span class="error-message" id="companyNameError"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="industry">
+                                    <i class="fas fa-industry"></i>
+                                    Industry *
+                                </label>
+                                <select id="industry">
+                                    <option value="">Select Industry</option>
+                                    <option value="Information Technology">Information Technology</option>
+                                    <option value="Finance">Finance</option>
+                                    <option value="Healthcare">Healthcare</option>
+                                    <option value="Education">Education</option>
+                                    <option value="Manufacturing">Manufacturing</option>
+                                    <option value="Retail">Retail</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                                <span class="error-message" id="industryError"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="companySize">
+                                    <i class="fas fa-users"></i>
+                                    Company Size
+                                </label>
+                                <select id="companySize">
+                                    <option value="">Select Size</option>
+                                    <option value="1-10">1-10 employees</option>
+                                    <option value="11-50">11-50 employees</option>
+                                    <option value="51-200">51-200 employees</option>
+                                    <option value="201-500">201-500 employees</option>
+                                    <option value="500+">500+ employees</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="companyLocation">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    Location *
+                                </label>
+                                <input type="text" id="companyLocation" placeholder="e.g., Ramallah, Palestine">
+                                <span class="error-message" id="companyLocationError"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="companyPhone">
+                                    <i class="fas fa-phone"></i>
+                                    Phone Number
+                                </label>
+                                <input type="tel" id="companyPhone" placeholder="+970599123456">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="website">
+                                    <i class="fas fa-globe"></i>
+                                    Website
+                                </label>
+                                <input type="url" id="website" placeholder="https://example.com">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="description">
+                                    <i class="fas fa-align-left"></i>
+                                    Company Description
+                                </label>
+                                <textarea id="description" rows="3" placeholder="Brief description of your company..."></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="companyProof">
+                                    <i class="fas fa-file-certificate"></i>
+                                    Company Verification Document * 
+                                    <span style="font-size: 0.85rem; color: var(--text-secondary); font-weight: normal;">
+                                        (PDF, DOC, DOCX, JPG, PNG - Max 5MB)
+                                    </span>
+                                </label>
+                                <div id="companyProofUploadArea" style="border: 2px dashed var(--border-color); border-radius: var(--radius-md); padding: 1.5rem; text-align: center; cursor: pointer; transition: all 0.3s;" onclick="document.getElementById('companyProofFile').click()">
+                                    <i class="fas fa-cloud-upload-alt" style="font-size: 2rem; color: var(--text-secondary); margin-bottom: 0.5rem;"></i>
+                                    <p style="margin: 0.5rem 0; color: var(--text-secondary);">
+                                        Click to upload or drag and drop
+                                    </p>
+                                    <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted);">
+                                        Company registration certificate or official proof
+                                    </p>
+                                </div>
+                                <input type="file" id="companyProofFile" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" style="display: none;" onchange="handleCompanyProofFileSelect(event)">
+                                <div id="companyProofFileStatus" style="display: none; margin-top: 0.5rem; padding: 0.75rem; background: var(--bg-secondary); border-radius: var(--radius-md);">
+                                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                                        <span id="companyProofFileName" style="color: var(--text-primary);"></span>
+                                        <button type="button" onclick="clearCompanyProofFile()" style="background: none; border: none; color: var(--danger-color); cursor: pointer;">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <span class="error-message" id="companyProofError"></span>
+                            </div>
+                        </div>
+
+                        <!-- Supervisor Profile -->
+                        <div id="supervisorProfile" class="profile-section">
+                            <div class="form-group">
+                                <label for="supervisorFirstName">
+                                    <i class="fas fa-user"></i>
+                                    First Name *
+                                </label>
+                                <input type="text" id="supervisorFirstName" placeholder="Enter your first name">
+                                <span class="error-message" id="supervisorFirstNameError"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="supervisorLastName">
+                                    <i class="fas fa-user"></i>
+                                    Last Name *
+                                </label>
+                                <input type="text" id="supervisorLastName" placeholder="Enter your last name">
+                                <span class="error-message" id="supervisorLastNameError"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="employeeId">
+                                    <i class="fas fa-id-badge"></i>
+                                    Employee ID *
+                                </label>
+                                <input type="text" id="employeeId" placeholder="e.g., SUP2025001">
+                                <span class="error-message" id="employeeIdError"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="supervisorUniversity">
+                                    <i class="fas fa-university"></i>
+                                    University *
+                                </label>
+                                <input type="text" id="supervisorUniversity" placeholder="e.g., An-Najah University">
+                                <span class="error-message" id="supervisorUniversityError"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="department">
+                                    <i class="fas fa-building"></i>
+                                    Department *
+                                </label>
+                                <input type="text" id="department" placeholder="e.g., Computer Science Department">
+                                <span class="error-message" id="departmentError"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="position">
+                                    <i class="fas fa-briefcase"></i>
+                                    Position/Title *
+                                </label>
+                                <input type="text" id="position" placeholder="e.g., Professor, Dr., Lecturer">
+                                <span class="error-message" id="positionError"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="supervisorPhone">
+                                    <i class="fas fa-phone"></i>
+                                    Phone Number *
+                                </label>
+                                <input type="tel" id="supervisorPhone" placeholder="+970599123456">
+                                <span class="error-message" id="supervisorPhoneError"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="officeLocation">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    Office Location
+                                </label>
+                                <input type="text" id="officeLocation" placeholder="e.g., Building A, Room 302">
+                            </div>
+                        </div>
+
+                        <div style="display: flex; gap: 1rem;">
+                            <button type="button" class="btn btn-outline" onclick="goToStep(2)" style="flex: 1;">
+                                <i class="fas fa-arrow-left"></i>
+                                Back
+                            </button>
+                            <button type="submit" class="btn btn-primary" id="registerBtn" style="flex: 2;">
+                                <span id="registerBtnText">
+                                    <i class="fas fa-user-plus"></i>
+                                    Create Account
+                                </span>
+                                <span id="registerBtnLoader" class="loader" style="display: none;"></span>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Footer -->
+                <div class="auth-footer">
+                    <p>Already have an account? <a href="login.html">Login here</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Files -->
+    <script src="../../js/core/config.js"></script>
+    <script src="../../js/core/auth.js"></script>
+    <script src="../../js/core/global-actions.js"></script>
+    <script src="../../js/auth/register.js"></script>
+</body>
+</html>

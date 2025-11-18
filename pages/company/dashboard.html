@@ -14,6 +14,14 @@
 </head>
 <body>
     <div class="dashboard-container">
+        <!-- Mobile Menu Toggle -->
+        <button class="mobile-menu-toggle" onclick="toggleMobileMenu()" aria-label="Toggle menu">
+            <i class="fas fa-bars"></i>
+        </button>
+        
+        <!-- Sidebar Overlay -->
+        <div class="sidebar-overlay" onclick="closeMobileMenu()"></div>
+        
         <!-- Sidebar -->
         <aside class="sidebar">
             <div class="sidebar-header">
@@ -71,11 +79,15 @@
                     </div>
                     <p>Manage your internships and connect with talented students</p>
                 </div>
-                <div class="notifications-header">
+                <div class="page-actions">
                     <div class="notification-icon-wrapper" onclick="goToNotificationsPage()">
                         <i class="fas fa-bell"></i>
                         <span class="notification-badge hidden" id="notificationBadge">0</span>
                     </div>
+                    <button class="btn btn-refresh" id="companyRefreshBtn" onclick="refreshCompanyDashboard()">
+                        <i class="fas fa-sync-alt"></i>
+                        Refresh
+                    </button>
                 </div>
             </div>
 
@@ -211,11 +223,12 @@
     </div>
 
     <!-- JavaScript Files -->
-    <script src="../../js/config.js"></script>
-    <script src="../../js/auth.js"></script>
-    <script src="../../js/api.js"></script>
-    <script src="../../js/notifications-handler.js"></script>
-    <script src="../../js/global-actions.js"></script>
-    <script src="../../js/company-dashboard.js"></script>
+    <script src="../../js/core/config.js"></script>
+    <script src="../../js/core/auth.js"></script>
+    <script src="../../js/core/api.js"></script>
+    <script src="../../js/core/notifications-handler.js"></script>
+    <script src="../../js/core/global-actions.js"></script>
+    <script src="../../js/company/dashboard.js"></script>
 </body>
 </html>
+

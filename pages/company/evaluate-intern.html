@@ -104,6 +104,162 @@
             display: block;
             margin-bottom: 0.5rem;
         }
+        
+        .month-card {
+            padding: 1.5rem;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-md);
+            background: var(--bg-primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            position: relative;
+        }
+        
+        .month-card:hover:not(.disabled) {
+            border-color: var(--primary-color);
+            background: rgba(79, 70, 229, 0.05);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.1);
+        }
+        
+        .month-card.active {
+            border-color: var(--primary-color);
+            background: rgba(79, 70, 229, 0.1);
+        }
+        
+        .month-card.disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+            background: var(--bg-secondary);
+        }
+        
+        .month-card.disabled:hover {
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .month-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .month-card.disabled .month-number {
+            color: var(--text-muted);
+        }
+        
+        .month-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+        
+        .month-status {
+            font-size: 0.75rem;
+            padding: 0.5rem;
+            border-radius: var(--radius-sm);
+            margin-top: 0.5rem;
+        }
+        
+        .month-status.available {
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--success-color);
+        }
+        
+        .month-status.pending {
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+        }
+        
+        .month-status.completed {
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--success-color);
+        }
+        
+        .evaluate-btn {
+            width: 100%;
+            margin-top: 1rem;
+            padding: 0.75rem;
+            border: none;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .evaluate-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .evaluate-btn.active:hover {
+            background: var(--primary-dark);
+        }
+        
+        .evaluate-btn.disabled {
+            background: var(--bg-secondary);
+            color: var(--text-muted);
+            cursor: not-allowed;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            #monthsContainer {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 0.75rem;
+            }
+
+            .month-card {
+                padding: 1.25rem;
+            }
+
+            .month-number {
+                font-size: 1.5rem;
+            }
+
+            .rating-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .rating-stars {
+                width: 100%;
+                justify-content: flex-start;
+            }
+
+            .recommendation-buttons {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 480px) {
+            #monthsContainer {
+                grid-template-columns: 1fr;
+            }
+
+            .month-card {
+                padding: 1rem;
+            }
+
+            .month-number {
+                font-size: 1.25rem;
+            }
+
+            .rating-item {
+                padding: 0.75rem;
+            }
+
+            .rating-label {
+                font-size: 0.9375rem;
+            }
+
+            .rating-stars i {
+                font-size: 1.25rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -216,7 +372,22 @@
                     <!-- Will be populated by JavaScript -->
                 </div>
 
-                <form id="evaluationFormElement">
+                <!-- Monthly Evaluation Selection -->
+                <div class="content-section" id="monthlySelectionSection">
+                    <h2 style="margin-bottom: 1.5rem;">
+                        <i class="fas fa-calendar-alt"></i>
+                        Monthly Evaluations
+                    </h2>
+                    <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+                        Select a month to submit the monthly evaluation. Evaluations can only be submitted in the last 4 days of each month.
+                    </p>
+                    <div id="monthsContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem;">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Monthly Evaluation Form -->
+                <form id="evaluationFormElement" style="display: none;">
                     <!-- Overall Rating Summary -->
                     <div class="evaluation-summary">
                         <div style="text-align: center;">
@@ -409,6 +580,46 @@
                         </div>
                     </div>
 
+                    <!-- Attendance (for monthly evaluations) -->
+                    <div class="content-section" id="attendanceSection" style="display: none;">
+                        <h2 style="margin-bottom: 1.5rem;">
+                            <i class="fas fa-calendar-check"></i>
+                            Attendance & Performance
+                        </h2>
+
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="attendanceDays">
+                                    <i class="fas fa-user-check"></i>
+                                    Attendance Days *
+                                </label>
+                                <input 
+                                    type="number" 
+                                    id="attendanceDays" 
+                                    min="0"
+                                    placeholder="e.g., 18"
+                                    required
+                                >
+                                <span class="error-message" id="attendanceDaysError"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="totalWorkingDays">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    Total Working Days *
+                                </label>
+                                <input 
+                                    type="number" 
+                                    id="totalWorkingDays" 
+                                    min="1"
+                                    placeholder="e.g., 20"
+                                    required
+                                >
+                                <span class="error-message" id="totalWorkingDaysError"></span>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Achievements & Projects -->
                     <div class="content-section">
                         <h2 style="margin-bottom: 1.5rem;">
@@ -419,7 +630,7 @@
                         <div class="form-group">
                             <label for="keyAchievements">
                                 <i class="fas fa-star"></i>
-                                Key Achievements
+                                Key Achievements / Tasks Completed
                             </label>
                             <textarea 
                                 id="keyAchievements" 
@@ -431,7 +642,7 @@
                         <div class="form-group">
                             <label for="projectsCompleted">
                                 <i class="fas fa-tasks"></i>
-                                Projects Completed
+                                Projects Involved
                             </label>
                             <textarea 
                                 id="projectsCompleted" 
@@ -441,8 +652,8 @@
                         </div>
                     </div>
 
-                    <!-- Recommendation -->
-                    <div class="content-section">
+                    <!-- Recommendation (only for final evaluation) -->
+                    <div class="content-section" id="recommendationSection">
                         <h2 style="margin-bottom: 1.5rem;">
                             <i class="fas fa-handshake"></i>
                             Recommendation
@@ -463,7 +674,7 @@
                             </div>
                         </div>
 
-                        <input type="hidden" id="wouldRecommend" required>
+                        <input type="hidden" id="wouldRecommend">
                         <span class="error-message" id="wouldRecommendError"></span>
 
                         <div class="form-group" style="margin-top: 1.5rem;">
@@ -479,8 +690,8 @@
                         </div>
                     </div>
 
-                    <!-- Future Opportunities -->
-                    <div class="content-section">
+                    <!-- Future Opportunities (only for final evaluation) -->
+                    <div class="content-section" id="futureOpportunitiesSection">
                         <h2 style="margin-bottom: 1.5rem;">
                             <i class="fas fa-rocket"></i>
                             Future Opportunities
@@ -494,6 +705,10 @@
 
                     <!-- Form Actions -->
                     <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem; padding-top: 2rem; border-top: 2px solid var(--border-color);">
+                        <button type="button" class="btn btn-outline" onclick="backToMonthSelection()" id="backToMonthsBtn" style="display: none;">
+                            <i class="fas fa-arrow-left"></i>
+                            Back to Months
+                        </button>
                         <a href="applications.html" class="btn btn-outline">
                             <i class="fas fa-times"></i>
                             Cancel
@@ -501,7 +716,7 @@
                         <button type="submit" class="btn btn-primary" id="submitBtn">
                             <span id="submitBtnText">
                                 <i class="fas fa-paper-plane"></i>
-                                Submit Evaluation
+                                <span id="submitBtnLabel">Submit Evaluation</span>
                             </span>
                             <span id="submitBtnLoader" class="loader" style="display: none;"></span>
                         </button>
@@ -512,10 +727,11 @@
     </div>
 
     <!-- JavaScript Files -->
-    <script src="../../js/config.js"></script>
-    <script src="../../js/auth.js"></script>
-    <script src="../../js/api.js"></script>
-    <script src="../../js/notifications-handler.js"></script>
-    <script src="../../js/company-evaluate-intern.js"></script>
+    <script src="../../js/core/config.js"></script>
+    <script src="../../js/core/auth.js"></script>
+    <script src="../../js/core/api.js"></script>
+    <script src="../../js/core/notifications-handler.js"></script>
+    <script src="../../js/company/evaluate-intern.js"></script>
 </body>
 </html>
+
